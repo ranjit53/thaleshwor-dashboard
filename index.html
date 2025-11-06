@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Shree Thaleshwor Mahadev Yuva Samuh - Dashboard</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+  <!-- Firebase Compat SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-database-compat.js"></script>
+
+  <style>
+    .sidebar-link { @apply flex items-center px-6 py-4 text-base font-bold rounded-xl transition-colors duration-200; }
+    .sidebar-link:hover { @apply bg-gray-100 text-gray-900; }
+    .sidebar-link.active { @apply bg-blue-100 text-blue-700 font-extrabold; }
+    .sidebar-icon { @apply w-5 h-5 mr-3; }
+    .stat-card { @apply bg-white p-5 rounded-xl shadow-sm border border-gray-200 flex items-center justify-between; }
+    .chart-container { @apply bg-white p-6 rounded-xl shadow-sm border border-gray-200; }
+    .badge-active { @apply bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs; }
+    .badge-inactive { @apply bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs; }
+    main { min-height: 100vh; }
+    .form-grid { @apply grid grid-cols-1 md:grid-cols-2 gap-4; }
+    .form-grid .full { @apply md:col-span-2; }
+    .small-chart { height: 250px !important; }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+
+  <!-- ==== AUTH MODAL ==== -->
+  <div id="authModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-8">
+      <div class="flex items-center mb-6">
+        <div class="w-10 h-10 bg-teal-500 rounded-full flex items-center justify-center text-white font-bold text-lg">T</div>
+        <div class="ml-3">
+          <h2 class="text-xl font-bold">Shree Thaleshwor</h2>
+          <p class="text-xs text-gray-500">Mahadev Yuva Samuh</p>
+        </div>
+      </div>
+      <form onsubmit="handleSignIn(event)" class="space-y-4">
+        <input id="signinEmail" type="email" placeholder="Email" value="example.admin@gmail.com" required class="w-full px-4 py-2 border rounded-md">
+        <input id="signinPassword" type="password" placeholder="Password" value="admin2082" required class="w-full px-4 py-2 border rounded-md">
+        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">Sign In</button>
+        <p class="text-xs text-center text-gray-500 mt-3">Default: <strong>example.admin@gmail.com</strong> / <strong>admin2082</strong></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==== MAIN APP ==== -->
+  <div id="app" class="hidden flex">
+
+    <!-- ==== SIDEBAR ==== -->
+    <aside class="w-64 bg-white shadow-md h-screen sticky top-0 overflow-y-auto">
+      <div class="p-6 border-b">
+        <div class="flex items-center">
+          <div class="w-10 h-10 bg-teal-500 rounded-full flex items-center justify-center text-white font-bold text-lg">T</div>
+          <div class="ml-3">
+            <h1 class="text-xl font-bold">Shree Thaleshwor</h1>
+            <p class="text-xs text-gray-500">Mahadev Yuva Samuh</p>
+          </div>
+        </div>
+      </div>
+      <nav class="p-4 space-y-2">
+        <a id="nav-dashboard" href="javascript:void(0)" onclick="showSection('dashboard')" class="sidebar-link active">
+          <i class="fas fa-tachometer-alt sidebar-icon"></i> Dashboard
+        </a>
+        <a id="nav-members" href="javascript:void(0)" onclick="showSection('members')" class="sidebar-link">
+          <i class="fas fa-users sidebar-icon"></i> Members
+        </a>
+        <a id="nav-savings" href="javascript:void(0)" onclick="showSection('savings')" class="sidebar-link">
+          <i class="fas fa-piggy-bank sidebar-icon"></i> Savings
+        </a>
+        <a id="nav-loans" href="javascript:void(0)" onclick="showSection('loans')" class="sidebar-link">
+          <i class="fas fa-hand-holding-usd sidebar-icon"></i> Loans
+        </a>
+        <a id="nav-payments" href="javascript:void(0)" onclick="showSection('payments')" class="sidebar-link">
+          <i class="fas fa-money-check-alt sidebar-icon"></i> Payments
+        </a>
+        <a id="nav-settings" href="javascript:void(0)" onclick="showSection('settings')" class="sidebar-link hidden">
+          <i class="fas fa-cog sidebar-icon"></i> Settings
+        </a>
+      </nav>
+      <div class="p-4 border-t">
+        <div class="flex items-center">
+          <div id="userAvatarSmall" class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold"></div>
+          <div class="ml-3">
+            <p id="userNameSmall" class="text-sm font-medium"></p>
+            <p id="userRoleSmall" class="text-xs text-gray-500"></p>
+          </div>
+          <button onclick="logout()" class="ml-auto text-red-600 hover:underline text-sm">Logout</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ==== MAIN CONTENT ==== -->
+    <main class="flex-1 p-6">
+
+      <!-- Header -->
+      <header class="mb-6">
+        <h2 id="headerTitle" class="text-2xl font-bold"></h2>
+        <p id="headerSubtitle" class="text-sm text-gray-500"></p>
+      </header>
+
+      <!-- ==== DASHBOARD ==== -->
+      <section id="section-dashboard" class="space-y-6">
+        <!-- Stats -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="stat-card">
+            <div>
+              <p class="text-sm text-gray-500">Total Members</p>
+              <p id="stat-members" class="text-2xl font-bold">0</p>
+            </div>
+            <i class="fas fa-users text-blue-600 text-2xl"></i>
+          </div>
+          <div class="stat-card">
+            <div>
+              <p class="text-sm text-gray-500">Total Savings</p>
+              <p id="stat-savings" class="text-2xl font-bold">रु0</p>
+            </div>
+            <i class="fas fa-piggy-bank text-green-600 text-2xl"></i>
+          </div>
+          <div class="stat-card">
+            <div>
+              <p class="text-sm text-gray-500">Active Loans</p>
+              <p id="stat-loans" class="text-2xl font-bold">रु0</p>
+            </div>
+            <i class="fas fa-hand-holding-usd text-yellow-600 text-2xl"></i>
+          </div>
+          <div class="stat-card">
+            <div>
+              <p class="text-sm text-gray-500">Interest Earned</p>
+              <p id="stat-interest" class="text-2xl font-bold">रु0</p>
+            </div>
+            <i class="fas fa-chart-line text-purple-600 text-2xl"></i>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="chart-container">
+            <h3 class="text-lg font-semibold mb-4">Savings vs Loans Trend</h3>
+            <canvas id="lineChart" class="small-chart"></canvas>
+          </div>
+          <div class="chart-container">
+            <h3 class="text-lg font-semibold mb-4">Loan Distribution</h3>
+            <canvas id="pieChart" class="small-chart"></canvas>
+          </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="stat-card">
+            <p class="text-sm text-gray-500">Net Balance</p>
+            <p id="stat-balance" class="text-xl font-bold text-green-600">रु0</p>
+          </div>
+          <div class="stat-card">
+            <p class="text-sm text-gray-500">Monthly Growth</p>
+            <p id="stat-growth" class="text-xl font-bold text-green-600">0%</p>
+          </div>
+          <div class="stat-card">
+            <p class="text-sm text-gray-500">Defaulters (Savings)</p>
+            <p id="defaulters-savings" class="text-xl font-bold text-red-600">0</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==== MEMBERS ==== -->
+      <section id="section-members" class="hidden space-y-6">
+        <div class="flex justify-between items-center">
+          <h3 class="text-xl font-bold">Members (<span id="member-count">0</span>)</h3>
+          <button onclick="openAddMemberModal()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 admin-only">Add Member</button>
+        </div>
+        <input type="text" placeholder="Search members..." onkeyup="searchTable('member-list', this.value)" class="w-full px-4 py-2 border rounded-md mb-4">
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="p-3 text-left">ID</th>
+                <th class="p-3 text-left">Name</th>
+                <th class="p-3 text-left">Phone</th>
+                <th class="p-3 text-left">Join Date</th>
+                <th class="p-3 text-left">Status</th>
+                <th class="p-3 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="member-list"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==== SAVINGS ==== -->
+      <section id="section-savings" class="hidden space-y-6">
+        <div class="flex justify-between items-center">
+          <h3 class="text-xl font-bold">Savings (<span id="saving-count">0</span>)</h3>
+          <div class="space-x-2">
+            <button onclick="openBulkSavingsModal()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 admin-only">Bulk Record</button>
+            <button onclick="openAddSavingModal()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 admin-only">Add Saving</button>
+          </div>
+        </div>
+        <input type="text" placeholder="Search savings..." onkeyup="searchTable('saving-list', this.value)" class="w-full px-4 py-2 border rounded-md mb-4">
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="p-3 text-left">Member</th>
+                <th class="p-3 text-left">Total Saved</th>
+                <th class="p-3 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="saving-list"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==== LOANS ==== -->
+      <section id="section-loans" class="hidden space-y-6">
+        <div class="flex justify-between items-center">
+          <h3 class="text-xl font-bold">Loans (<span id="loan-count">0</span>)</h3>
+          <button onclick="openAddLoanModal()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 admin-only">Add Loan</button>
+        </div>
+        <input type="text" placeholder="Search loans..." onkeyup="searchTable('loan-list', this.value)" class="w-full px-4 py-2 border rounded-md mb-4">
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="p-3 text-left">Member</th>
+                <th class="p-3 text-left">Principal</th>
+                <th class="p-3 text-left">Balance</th>
+                <th class="p-3 text-left">Rate</th>
+                <th class="p-3 text-left">Date</th>
+                <th class="p-3 text-left">Status</th>
+                <th class="p-3 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="loan-list"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==== PAYMENTS ==== -->
+      <section id="section-payments" class="hidden space-y-6">
+        <div class="flex justify-between items-center">
+          <h3 class="text-xl font-bold">Payments (<span id="payment-count">0</span>)</h3>
+          <button onclick="openAddPaymentModal()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 admin-only">Add Payment</button>
+        </div>
+        <input type="text" placeholder="Search payments..." onkeyup="searchTable('payment-list', this.value)" class="w-full px-4 py-2 border rounded-md mb-4">
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="p-3 text-left">Member</th>
+                <th class="p-3 text-left">Loan Amount</th>
+                <th class="p-3 text-left">Total Paid</th>
+                <th class="p-3 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="payment-list"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==== SETTINGS ==== -->
+      <section id="section-settings" class="hidden space-y-6">
+        <h3 class="text-xl font-bold">User Management</h3>
+        <button onclick="openAddUserModal()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Add User</button>
+        <div class="overflow-x-auto mt-4">
+          <table class="w-full border-collapse">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="p-3 text-left">Name</th>
+                <th class="p-3 text-left">Email</th>
+                <th class="p-3 text-left">Role</th>
+                <th class="p-3 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="user-list"></tbody>
+          </table>
+        </div>
+        <div class="mt-6 space-y-2">
+          <button onclick="downloadBackup()" class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700">Download Backup</button>
+          <label class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 cursor-pointer">
+            Restore Backup <input type="file" accept=".json" onchange="restoreBackup(event)" class="hidden">
+          </label>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ==== MODALS (Add Member, Edit Member, etc.) ==== -->
+  <!-- Add Member Modal -->
+  <div id="addMemberModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+      <h3 class="text-lg font-bold mb-4">Add New Member</h3>
+      <form onsubmit="addMember(event)">
+        <div class="space-y-3">
+          <input type="text" id="memberId" placeholder="Member ID (auto)" readonly class="w-full px-3 py-2 border rounded-md">
+          <input type="text" id="memberName" placeholder="Full Name" required class="w-full px-3 py-2 border rounded-md">
+          <input type="tel" id="memberPhone" placeholder="Phone" class="w-full px-3 py-2 border rounded-md">
+          <input type="text" id="memberAddress" placeholder="Address" class="w-full px-3 py-2 border rounded-md">
+          <input type="date" id="memberDate" required class="w-full px-3 py-2 border rounded-md">
+          <select id="memberStatus" class="w-full px-3 py-2 border rounded-md">
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+        <div class="flex justify-end space-x-2 mt-4">
+          <button type="button" onclick="closeModal('addMemberModal')" class="px-4 py-2 border rounded hover:bg-gray-100">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Member Modal (same fields, different IDs) -->
+  <div id="editMemberModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+      <h3 class="text-lg font-bold mb-4">Edit Member</h3>
+      <form onsubmit="saveEditedMember(event)">
+        <input type="hidden" id="editMemberId">
+        <div class="space-y-3">
+          <input type="text" id="editMemberName" placeholder="Full Name" required class="w-full px-3 py-2 border rounded-md">
+          <input type="tel" id="editMemberPhone" placeholder="Phone" class="w-full px-3 py-2 border rounded-md">
+          <input type="text" id="editMemberAddress" placeholder="Address" class="w-full px-3 py-2 border rounded-md">
+          <input type="date" id="editMemberDate" required class="w-full px-3 py-2 border rounded-md">
+          <select id="editMemberStatus" class="w-full px-3 py-2 border rounded-md">
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+        <div class="flex justify-end space-x-2 mt-4">
+          <button type="button" onclick="closeModal('editMemberModal')" class="px-4 py-2 border rounded hover:bg-gray-100">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Update</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Loan Modal -->
+  <div id="addLoanModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+      <h3 class="text-lg font-bold mb-4">Add New Loan</h3>
+      <form onsubmit="addLoan(event)">
+        <div class="space-y-3">
+          <select id="loanMemberId" required class="w-full px-3 py-2 border rounded-md"></select>
+          <input type="number" id="loanPrincipal" placeholder="Principal Amount" min="1" required class="w-full px-3 py-2 border rounded-md">
+          <input type="number" id="loanRate" placeholder="Interest Rate (%)" step="0.1" required class="w-full px-3 py-2 border rounded-md">
+          <input type="number" id="loanDuration" placeholder="Duration (months)" min="1" required class="w-full px-3 py-2 border rounded-md">
+          <input type="date" id="loanDate" required class="w-full px-3 py-2 border rounded-md">
+          <select id="loanStatus" class="w-full px-3 py-2 border rounded-md">
+            <option value="Active">Active</option>
+            <option value="Paid">Paid</option>
+          </select>
+        </div>
+        <div class="flex justify-end space-x-2 mt-4">
+          <button type="button" onclick="closeModal('addLoanModal')" class="px-4 py-2 border rounded hover:bg-gray-100">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Saving Modal -->
+  <div id="addSavingModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+      <h3 class="text-lg font-bold mb-4">Add Saving</h3>
+      <form onsubmit="addSaving(event)">
+        <div class="space-y-3">
+          <select id="savingMemberId" required class="w-full px-3 py-2 border rounded-md"></select>
+          <input type="number" id="savingAmount" placeholder="Amount" min="1" required class="w-full px-3 py-2 border rounded-md">
+          <input type="month" id="savingMonth" required class="w-full px-3 py-2 border rounded-md">
+          <select id="savingStatus" class="w-full px-3 py-2 border rounded-md">
+            <option value="Paid">Paid</option>
+            <option value="Pending">Pending</option>
+          </select>
+        </div>
+        <div class="flex justify-end space-x-2 mt-4">
+          <button type="button" onclick="closeModal('addSavingModal')" class="px-4 py-2 border rounded hover:bg-gray-100">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Payment Modal -->
+  <div id="addPaymentModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+      <h3 class="text-lg font-bold mb-4">Add Payment</h3>
+      <form onsubmit="addPayment(event)">
+        <div class="space-y-3">
+          <select id="paymentLoanId" required class="w-full px-3 py-2 border rounded-md"></select>
+          <input type="month" id="paymentMonth" required class="w-full px-3 py-2 border rounded-md">
+          <input type="number" id="paymentInterest" placeholder="Interest" step="0.01" class="w-full px-3 py-2 border rounded-md">
+          <input type="number" id="paymentPrincipal" placeholder="Principal" step="0.01" class="w-full px-3 py-2 border rounded-md">
+          <input type="date" id="paymentDate" required class="w-full px-3 py-2 border rounded-md">
+          <select id="paymentStatus" class="w-full px-3 py-2 border rounded-md">
+            <option value="Paid">Paid</option>
+            <option value="Pending">Pending</option>
+          </select>
+        </div>
+        <div class="flex justify-end space-x-2 mt-4">
+          <button type="button" onclick="closeModal('addPaymentModal')" class="px-4 py-2 border rounded hover:bg-gray-100">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Bulk Savings Modal -->
+  <div id="bulkSavingsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+      <h3 class="text-lg font-bold mb-4">Bulk Savings Record</h3>
+      <form onsubmit="recordBulkSavings(event)">
+        <div class="space-y-3">
+          <input type="month" id="bulkSavingMonth" required class="w-full px-3 py-2 border rounded-md">
+          <input type="number" id="bulkSavingAmount" placeholder="Amount per member" min="1" required class="w-full px-3 py-2 border rounded-md">
+          <select id="bulkSavingStatus" class="w-full px-3 py-2 border rounded-md">
+            <option value="Paid">Paid</option>
+            <option value="Pending">Pending</option>
+          </select>
+        </div>
+        <div class="flex justify-end space-x-2 mt-4">
+          <button type="button" onclick="closeModal('bulkSavingsModal')" class="px-4 py-2 border rounded hover:bg-gray-100">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Record</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Report Modal -->
+  <div id="reportModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl p-6 max-h-screen overflow-y-auto">
+      <div class="flex justify-between items-center mb-4">
+        <h3 id="reportTitle" class="text-lg font-bold"></h3>
+        <button onclick="closeModal('reportModal')" class="text-gray-500 hover:text-gray-700">X</button>
+      </div>
+      <div id="reportContent"></div>
+    </div>
+  </div>
+
+  <!-- Add User Modal -->
+  <div id="addUserModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+      <h3 class="text-lg font-bold mb-4">Add New User</h3>
+      <form onsubmit="addUser(event)">
+        <div class="space-y-3">
+          <input type="text" id="newUserName" placeholder="Full Name" required class="w-full px-3 py-2 border rounded-md">
+          <input type="email" id="newUserEmail" placeholder="Email" required class="w-full px-3 py-2 border rounded-md">
+          <input type="password" id="newUserPassword" placeholder="Password" required class="w-full px-3 py-2 border rounded-md">
+          <select id="newUserRole" class="w-full px-3 py-2 border rounded-md">
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <div class="flex justify-end space-x-2 mt-4">
+          <button type="button" onclick="closeModal('addUserModal')" class="px-4 py-2 border rounded hover:bg-gray-100">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Add</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+<script>
+/* ==================== FIREBASE ==================== */
+const firebaseConfig = {
+  apiKey: "AIzaSyBd-ogOEv472kKWG9cLpbsFQBAK-i-0grw",
+  authDomain: "thaleshwor-mahadev-samuh.firebaseapp.com",
+  databaseURL: "https://thaleshwor-mahadev-samuh-default-rtdb.firebaseio.com",
+  projectId: "thaleshwor-mahadev-samuh",
+  storageBucket: "thaleshwor-mahadev-samuh.firebasestorage.app",
+  messagingSenderId: "590950394483",
+  appId: "1:590950394483:web:df0f094e45b60719e49806",
+  measurementId: "G-K07CXC9L28"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+/* Global arrays */
+let users = [], members = [], savings = [], loans = [], payments = [], currentUser = null;
+
+/* Load all data */
+async function loadAllData() {
+  const snap = await db.ref('/').once('value');
+  const data = snap.val() || {};
+  users    = data.users    || [{email:"example.admin@gmail.com",password:"admin2082",name:"Ranjit Singh",role:"admin"}];
+  members  = data.members  || [];
+  savings  = data.savings  || [];
+  loans    = data.loans    || [];
+  payments = data.payments || [];
+  updateUserInfo(); showSection('dashboard'); checkAuthorization();
+}
+function saveAllData() { db.ref('/').set({users, members, savings, loans, payments}); }
+
+/* ==================== AUTH ==================== */
+function handleSignIn(e) {
+  e.preventDefault();
+  const email = document.getElementById('signinEmail').value.trim().toLowerCase();
+  const password = document.getElementById('signinPassword').value.trim();
+  const user = users.find(u => u.email.toLowerCase() === email && u.password === password);
+  if (!user) return alert("Invalid credentials");
+  currentUser = user;
+  db.ref('currentUser').set(user);
+  document.getElementById("authModal").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+  updateUserInfo(); showSection('dashboard');
+}
+function logout(){ db.ref('currentUser').remove(); location.reload(); }
+
+function updateUserInfo() {
+  const u = currentUser || {};
+  const name = u.name || u.email?.split('@')[0] || '';
+  document.getElementById('userNameSmall').textContent = name;
+  document.getElementById('userRoleSmall').textContent = u.role || '';
+  document.getElementById('userAvatarSmall').textContent = name.charAt(0).toUpperCase();
+}
+
+/* ==================== ROLE & NAV ==================== */
+function getIsAdmin(){ return currentUser && currentUser.role === 'admin'; }
+function checkAuthorization(){
+  const admin = getIsAdmin();
+  document.getElementById('nav-settings').style.display = admin?'flex':'none';
+  document.querySelectorAll('.admin-only').forEach(el=>el.style.display=admin?'':'none');
+}
+
+function showSection(id){
+  if(id==='settings' && !getIsAdmin()) id='dashboard';
+  document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));
+  document.getElementById(`section-${id}`).classList.remove('hidden');
+  document.querySelectorAll('.sidebar-link').forEach(l=>l.classList.remove('active'));
+  document.getElementById(`nav-${id}`).classList.add('active');
+  const titles = {dashboard:['Dashboard','Overview'],members:['Members','Manage'],savings:['Savings','Track'],
+                  loans:['Loans','Manage'],payments:['Payments','Track'],settings:['Settings','Users']};
+  document.getElementById('headerTitle').textContent = titles[id][0];
+  document.getElementById('headerSubtitle').textContent = titles[id][1];
+  if(id==='dashboard') loadDashboard();
+  else if(id==='members') renderMembers();
+  else if(id==='savings') renderSavings();
+  else if(id==='loans') renderLoans();
+  else if(id==='payments') renderPayments();
+  else if(id==='settings') renderUsers();
+  checkAuthorization();
+}
+
+/* ==================== DASHBOARD ==================== */
+let lineChart, pieChart;
+function loadDashboard(){ updateStats(); renderLineChart(); renderPieChart(); updateDefaulters(); }
+function updateStats(){
+  document.getElementById('stat-members').textContent = members.length;
+  const totalSavings = savings.reduce((a,s)=>a+(parseFloat(s.amount)||0),0);
+  document.getElementById('stat-savings').textContent = `रु${totalSavings.toLocaleString()}`;
+  const activeLoans = loans.filter(l=>l.status==='Active').reduce((a,l)=>a+(parseFloat(l.balance)||0),0);
+  document.getElementById('stat-loans').textContent = `रु${activeLoans.toLocaleString()}`;
+  const totalInterest = payments.reduce((a,p)=>a+(parseFloat(p.interest)||0),0);
+  document.getElementById('stat-interest').textContent = `रु${totalInterest.toLocaleString()}`;
+  const balance = totalSavings - activeLoans;
+  document.getElementById('stat-balance').textContent = `रु${balance.toLocaleString()}`;
+  document.getElementById('stat-growth').textContent = '+2%';
+}
+function renderLineChart(){
+  const ctx = document.getElementById('lineChart').getContext('2d');
+  if(lineChart) lineChart.destroy();
+  lineChart = new Chart(ctx,{type:'line',data:{labels:['Sep','Oct','Nov','Dec','Jan','Feb'],
+    datasets:[{label:'Savings',data:[0,5000,10000,18000,25000,35000],borderColor:'#10b981',tension:0.4},
+              {label:'Loans',data:[0,3000,8000,15000,20000,30000],borderColor:'#3b82f6',tension:0.4}]},
+    options:{responsive:true,plugins:{legend:{position:'bottom'}},maintainAspectRatio:false}});
+}
+function renderPieChart(){
+  const ctx = document.getElementById('pieChart').getContext('2d');
+  if(pieChart) pieChart.destroy();
+  const loanTotals = {};
+  loans.forEach(l=>{
+    const m = members.find(x=>x.id===l.memberId);
+    const name = m?.name||'Unknown';
+    loanTotals[name] = (loanTotals[name]||0) + (parseFloat(l.principal)||0);
+  });
+  const labels = Object.keys(loanTotals);
+  const data   = Object.values(loanTotals);
+  const colors = ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#6366f1','#14b8a6','#d946ef'];
+  pieChart = new Chart(ctx,{type:'doughnut',data:{labels,datasets:[{data,backgroundColor:labels.map((_,i)=>colors[i%colors.length])}]},
+    options:{responsive:true,plugins:{legend:{position:'bottom'}},maintainAspectRatio:false}});
+}
+function updateDefaulters(){
+  const month = new Date().toISOString().slice(0,7);
+  const paidSavings = new Set(savings.filter(s=>s.month===month).map(s=>s.memberId));
+  document.getElementById('defaulters-savings').textContent = members.filter(m=>!paidSavings.has(m.id)).length;
+  const paidLoans = new Set(payments.filter(p=>p.month===month).map(p=>p.loanId));
+  document.getElementById('defaulters-loans').textContent = loans.filter(l=>l.status==='Active' && !paidLoans.has(l.id)).length;
+}
+
+/* ==================== RENDER TABLES ==================== */
+function renderMembers(){
+  const tbody = document.getElementById('member-list');
+  document.getElementById('member-count').textContent = members.length;
+  tbody.innerHTML = members.map(m=>`
+    <tr class="border-b hover:bg-gray-50">
+      <td class="p-3">${m.id}</td>
+      <td class="p-3">${m.name}</td>
+      <td class="p-3">${m.phone||'-'}</td>
+      <td class="p-3">${m.joinDate}</td>
+      <td class="p-3"><span class="${m.status==='Active'?'badge-active':'badge-inactive'}">${m.status}</span></td>
+      <td class="p-3 space-x-2">
+        <button onclick="openEditMember('${m.id}')" class="text-blue-600 hover:underline text-xs admin-only">Edit</button>
+        <button onclick="deleteMember('${m.id}')" class="text-red-600 hover:underline text-xs admin-only">Delete</button>
+        <button onclick="showReportModal('member', '${m.id}')" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-xs font-semibold">Review</button>
+      </td>
+    </tr>
+  `).join('') || '<tr><td colspan="6" class="p-3 text-center text-gray-500">No members</td></tr>';
+}
+function renderSavings(){
+  const tbody = document.getElementById('saving-list');
+  const grouped = Object.values(savings.reduce((acc,s)=>{if(!acc[s.memberId])acc[s.memberId]={total:0,memberId:s.memberId};acc[s.memberId].total+=parseFloat(s.amount)||0;return acc;},{}));
+  document.getElementById('saving-count').textContent = grouped.length;
+  tbody.innerHTML = grouped.map(g=>{
+    const m = members.find(x=>x.id===g.memberId);
+    return `<tr class="border-b hover:bg-gray-50">
+      <td class="p-3">${m?.name||'Unknown'}</td>
+      <td class="p-3 font-semibold">रु${g.total.toLocaleString()}</td>
+      <td class="p-3"><button onclick="showReportModal('savings','${g.memberId}')" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-xs font-semibold">Review</button></td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="3" class="p-3 text-center text-gray-500">No savings</td></tr>';
+}
+function renderLoans(){
+  const tbody = document.getElementById('loan-list');
+  document.getElementById('loan-count').textContent = loans.length;
+  tbody.innerHTML = loans.map(l=>{
+    const m = members.find(x=>x.id===l.memberId);
+    return `<tr class="border-b hover:bg-gray-50">
+      <td class="p-3">${m?.name||'Unknown'}</td>
+      <td class="p-3">रु${(l.principal||0).toLocaleString()}</td>
+      <td class="p-3 font-semibold">रु${(l.balance||0).toLocaleString()}</td>
+      <td class="p-3">${l.rate||0}%</td>
+      <td class="p-3">${l.date||'-'}</td>
+      <td class="p-3"><span class="${l.status==='Active'?'badge-active':'badge-inactive'}">${l.status||'N/A'}</span></td>
+      <td class="p-3 space-x-2">
+        <button onclick="openEditLoan('${l.id}')" class="text-blue-600 hover:underline text-xs admin-only">Edit</button>
+        <button onclick="deleteLoan('${l.id}')" class="text-red-600 hover:underline text-xs admin-only">Delete</button>
+        <button onclick="showReportModal('loan','${l.id}')" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-xs font-semibold">Review</button>
+      </td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="7" class="p-3 text-center text-gray-500">No loans</td></tr>';
+}
+function renderPayments(){
+  const tbody = document.getElementById('payment-list');
+  const grouped = Object.values(payments.reduce((acc,p)=>{if(!acc[p.loanId])acc[p.loanId]={total:0,loanId:p.loanId};acc[p.loanId].total+=parseFloat(p.total)||0;return acc;},{}));
+  document.getElementById('payment-count').textContent = grouped.length;
+  tbody.innerHTML = grouped.map(g=>{
+    const l = loans.find(x=>x.id===g.loanId);
+    const m = members.find(x=>x.id===l?.memberId);
+    return `<tr class="border-b hover:bg-gray-50">
+      <td class="p-3">${m?.name||'Unknown'}</td>
+      <td class="p-3">रु${(l?.principal||0).toLocaleString()}</td>
+      <td class="p-3 font-semibold">रु${g.total.toLocaleString()}</td>
+      <td class="p-3"><button onclick="showReportModal('payments','${g.loanId}')" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-xs font-semibold">Review</button></td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="4" class="p-3 text-center text-gray-500">No payments</td></tr>';
+}
+function renderUsers(){
+  const tbody = document.getElementById('user-list');
+  tbody.innerHTML = users.map(u=>`
+    <tr class="border-b">
+      <td class="p-3">${u.name}</td>
+      <td class="p-3">${u.email}</td>
+      <td class="p-3"><span class="px-2 py-1 rounded-full text-xs ${u.role==='admin'?'bg-purple-100 text-purple-800':'bg-gray-100 text-gray-800'}">${u.role}</span></td>
+      <td class="p-3">${u.email!=='example.admin@gmail.com'?`<button onclick="deleteUser('${u.email}')" class="text-red-600 hover:underline text-xs">Delete</button>`:''}</td>
+    </tr>
+  `).join('');
+}
+
+/* ==================== CRUD ==================== */
+function generateId(prefix){ return prefix + Date.now().toString(36); }
+function generateMemberId(){
+  const year = new Date().getFullYear().toString().slice(-2);
+  const count = members.filter(m=>m.id.startsWith(`M${year}`)).length + 1;
+  return `M${year}${String(count).padStart(3,'0')}`;
+}
+
+/* Member */
+function openAddMemberModal(){
+  document.getElementById('memberId').value = generateMemberId();
+  document.getElementById('addMemberModal').classList.remove('hidden');
+}
+function addMember(e){
+  e.preventDefault();
+  const m = {
+    id: document.getElementById('memberId').value,
+    name: document.getElementById('memberName').value,
+    phone: document.getElementById('memberPhone').value,
+    address: document.getElementById('memberAddress').value,
+    joinDate: document.getElementById('memberDate').value,
+    status: document.getElementById('memberStatus').value
+  };
+  members.push(m);
+  saveAllData();
+  closeModal('addMemberModal');
+  renderMembers(); loadDashboard();
+}
+function openEditMember(id){
+  const m = members.find(x=>x.id===id);
+  if(!m) return;
+  document.getElementById('editMemberId').value = m.id;
+  document.getElementById('editMemberName').value = m.name;
+  document.getElementById('editMemberPhone').value = m.phone||'';
+  document.getElementById('editMemberAddress').value = m.address||'';
+  document.getElementById('editMemberDate').value = m.joinDate;
+  document.getElementById('editMemberStatus').value = m.status;
+  document.getElementById('editMemberModal').classList.remove('hidden');
+}
+function saveEditedMember(e){
+  e.preventDefault();
+  const id = document.getElementById('editMemberId').value;
+  const idx = members.findIndex(m=>m.id===id);
+  members[idx] = {
+    id, name: document.getElementById('editMemberName').value,
+    phone: document.getElementById('editMemberPhone').value,
+    address: document.getElementById('editMemberAddress').value,
+    joinDate: document.getElementById('editMemberDate').value,
+    status: document.getElementById('editMemberStatus').value
+  };
+  saveAllData();
+  closeModal('editMemberModal');
+  renderMembers(); loadDashboard();
+}
+function deleteMember(id){
+  if(!confirm("Delete member and all related data?")) return;
+  members = members.filter(m=>m.id!==id);
+  savings = savings.filter(s=>s.memberId!==id);
+  const loanIds = loans.filter(l=>l.memberId===id).map(l=>l.id);
+  payments = payments.filter(p=>!loanIds.includes(p.loanId));
+  loans = loans.filter(l=>l.memberId!==id);
+  saveAllData();
+  renderMembers(); renderSavings(); renderLoans(); renderPayments(); loadDashboard();
+}
+
+/* Loan */
+function openAddLoanModal(){
+  const sel = document.getElementById('loanMemberId');
+  sel.innerHTML = members.map(m=>`<option value="${m.id}">${m.name}</option>`).join('');
+  document.getElementById('addLoanModal').classList.remove('hidden');
+}
+function addLoan(e){
+  e.preventDefault();
+  const principal = parseFloat(document.getElementById('loanPrincipal').value);
+  const l = {
+    id: generateId('L'), memberId: document.getElementById('loanMemberId').value,
+    principal, balance: principal,
+    rate: parseFloat(document.getElementById('loanRate').value),
+    duration: parseInt(document.getElementById('loanDuration').value),
+    date: document.getElementById('loanDate').value,
+    status: document.getElementById('loanStatus').value
+  };
+  loans.push(l);
+  saveAllData();
+  closeModal('addLoanModal');
+  renderLoans(); loadDashboard();
+}
+function openEditLoan(id){
+  const l = loans.find(x=>x.id===id);
+  if(!l) return;
+  const sel = document.getElementById('loanMemberId'); // reuse add modal fields
+  sel.innerHTML = members.map(m=>`<option value="${m.id}" ${m.id===l.memberId?'selected':''}>${m.name}</option>`).join('');
+  document.getElementById('loanPrincipal').value = l.principal;
+  document.getElementById('loanRate').value = l.rate;
+  document.getElementById('loanDuration').value = l.duration;
+  document.getElementById('loanDate').value = l.date;
+  document.getElementById('loanStatus').value = l.status;
+  // We'll reuse addLoanModal for edit – just change form submit
+  const form = document.querySelector('#addLoanModal form');
+  form.onsubmit = function(ev){
+    ev.preventDefault();
+    l.memberId = document.getElementById('loanMemberId').value;
+    l.principal = parseFloat(document.getElementById('loanPrincipal').value);
+    l.balance = l.principal - payments.filter(p=>p.loanId===id).reduce((a,p)=>a+(parseFloat(p.principal)||0),0);
+    l.rate = parseFloat(document.getElementById('loanRate').value);
+    l.duration = parseInt(document.getElementById('loanDuration').value);
+    l.date = document.getElementById('loanDate').value;
+    l.status = document.getElementById('loanStatus').value;
+    saveAllData();
+    closeModal('addLoanModal');
+    renderLoans(); loadDashboard();
+  };
+  document.getElementById('addLoanModal').classList.remove('hidden');
+}
+function deleteLoan(id){
+  if(!confirm("Delete loan and payments?")) return;
+  loans = loans.filter(l=>l.id!==id);
+  payments = payments.filter(p=>p.loanId!==id);
+  saveAllData();
+  renderLoans(); renderPayments(); loadDashboard();
+}
+
+/* Saving */
+function openAddSavingModal(){
+  const sel = document.getElementById('savingMemberId');
+  sel.innerHTML = members.map(m=>`<option value="${m.id}">${m.name}</option>`).join('');
+  document.getElementById('addSavingModal').classList.remove('hidden');
+}
+function addSaving(e){
+  e.preventDefault();
+  const s = {
+    id: generateId('S'), memberId: document.getElementById('savingMemberId').value,
+    amount: parseFloat(document.getElementById('savingAmount').value),
+    month: document.getElementById('savingMonth').value,
+    status: document.getElementById('savingStatus').value
+  };
+  savings.push(s);
+  saveAllData();
+  closeModal('addSavingModal');
+  renderSavings(); loadDashboard();
+}
+
+/* Payment */
+function openAddPaymentModal(){
+  const sel = document.getElementById('paymentLoanId');
+  sel.innerHTML = loans.filter(l=>l.status==='Active').map(l=>`<option value="${l.id}">${members.find(m=>m.id===l.memberId)?.name} - रु${l.balance}</option>`).join('');
+  document.getElementById('addPaymentModal').classList.remove('hidden');
+}
+function addPayment(e){
+  e.preventDefault();
+  const loanId = document.getElementById('paymentLoanId').value;
+  const month = document.getElementById('paymentMonth').value;
+  const interest = parseFloat(document.getElementById('paymentInterest').value)||0;
+  const principal = parseFloat(document.getElementById('paymentPrincipal').value)||0;
+  const total = interest + principal;
+  const p = {id:generateId('P'),loanId,month,interest,principal,total,
+             date:document.getElementById('paymentDate').value,
+             status:document.getElementById('paymentStatus').value};
+  payments.push(p);
+  saveAllData();
+  updateLoanBalance(loanId);
+  closeModal('addPaymentModal');
+  renderPayments(); loadDashboard();
+}
+function updateLoanBalance(loanId){
+  const loan = loans.find(l=>l.id===loanId);
+  if(!loan) return;
+  const paid = payments.filter(p=>p.loanId===loanId).reduce((a,p)=>a+(parseFloat(p.principal)||0),0);
+  loan.balance = loan.principal - paid;
+  loan.status = loan.balance <= 0 ? 'Paid' : 'Active';
+  saveAllData();
+}
+
+/* Bulk Savings */
+function openBulkSavingsModal(){
+  document.getElementById('bulkSavingsModal').classList.remove('hidden');
+}
+function recordBulkSavings(e){
+  e.preventDefault();
+  if(!getIsAdmin()) return alert("Only admins");
+  const month = document.getElementById('bulkSavingMonth').value;
+  const amount = parseFloat(document.getElementById('bulkSavingAmount').value);
+  const status = document.getElementById('bulkSavingStatus').value;
+  if(!month || isNaN(amount) || amount<=0) return alert("Invalid input");
+  const active = members.filter(m=>m.status==='Active');
+  if(active.length===0) return alert("No active members");
+  if(!confirm(`Record रु${amount} (${status}) for ${month} for ${active.length} members?`)) return;
+  let added = 0;
+  active.forEach(m=>{
+    if(!savings.find(s=>s.memberId===m.id && s.month===month)){
+      savings.push({id:generateId('S'),memberId:m.id,amount,month,status});
+      added++;
+    }
+  });
+  saveAllData();
+  alert(`Added ${added} new savings`);
+  e.target.reset();
+  closeModal('bulkSavingsModal');
+  renderSavings(); loadDashboard();
+}
+
+/* Users */
+function openAddUserModal(){
+  document.getElementById('addUserModal').classList.remove('hidden');
+}
+function addUser(e){
+  e.preventDefault();
+  const u = {
+    name: document.getElementById('newUserName').value,
+    email: document.getElementById('newUserEmail').value.trim().toLowerCase(),
+    password: document.getElementById('newUserPassword').value,
+    role: document.getElementById('newUserRole').value
+  };
+  if(users.some(x=>x.email===u.email)) return alert("Email already exists");
+  users.push(u);
+  saveAllData();
+  closeModal('addUserModal');
+  renderUsers();
+}
+function deleteUser(email){
+  if(!confirm("Delete user?")) return;
+  users = users.filter(u=>u.email!==email);
+  saveAllData();
+  renderUsers();
+}
+
+/* Backup / Restore */
+function downloadBackup(){
+  const data = {users,members,savings,loans,payments};
+  const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `thaleshwor-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+}
+function restoreBackup(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const r = new FileReader();
+  r.onload = async ev=>{
+    try{
+      const obj = JSON.parse(ev.target.result);
+      if(confirm("Overwrite everything?")){
+        await db.ref('/').set(obj);
+        location.reload();
+      }
+    }catch(err){alert("Invalid file");}
+  };
+  r.readAsText(file);
+}
+
+/* Report Modal */
+function showReportModal(type, id){
+  const title = document.getElementById('reportTitle');
+  const content = document.getElementById('reportContent');
+  let html = '';
+  if(type==='member'){
+    const m = members.find(x=>x.id===id);
+    const memSavings = savings.filter(s=>s.memberId===id);
+    const memLoans = loans.filter(l=>l.memberId===id);
+    html = `
+      <p><strong>Name:</strong> ${m.name}</p>
+      <p><strong>Phone:</strong> ${m.phone||'-'}</p>
+      <p><strong>Address:</strong> ${m.address||'-'}</p>
+      <p><strong>Total Saved:</strong> रु${memSavings.reduce((a,s)=>a+(parseFloat(s.amount)||0),0).toLocaleString()}</p>
+      <p><strong>Active Loans:</strong> ${memLoans.filter(l=>l.status==='Active').length}</p>
+      <h4 class="font-bold mt-4">Savings History</h4>
+      <table class="w-full mt-2 border"><thead class="bg-gray-100"><tr><th class="p-2">Month</th><th class="p-2">Amount</th><th class="p-2">Status</th></tr></thead><tbody>
+      ${memSavings.map(s=>`<tr><td class="p-2">${s.month}</td><td class="p-2">रु${(s.amount||0).toLocaleString()}</td><td class="p-2">${s.status}</td></tr>`).join('')}
+      </tbody></table>
+    `;
+    title.textContent = `Member Report: ${m.name}`;
+  } else if(type==='savings'){
+    const memSavings = savings.filter(s=>s.memberId===id);
+    const m = members.find(x=>x.id===id);
+    html = `<h4 class="font-bold">Savings for ${m.name}</h4>
+      <table class="w-full mt-2 border"><thead class="bg-gray-100"><tr><th class="p-2">Month</th><th class="p-2">Amount</th><th class="p-2">Status</th><th class="p-2">Action</th></tr></thead><tbody>
+      ${memSavings.map(s=>`<tr><td class="p-2">${s.month}</td><td class="p-2">रु${(s.amount||0).toLocaleString()}</td><td class="p-2">${s.status}</td><td class="p-2"><button onclick="deleteSaving('${s.id}','${id}');closeModal('reportModal')" class="text-red-600 text-xs">Delete</button></td></tr>`).join('')}
+      </tbody></table>`;
+    title.textContent = `Savings Report`;
+  } else if(type==='loan'){
+    const l = loans.find(x=>x.id===id);
+    const m = members.find(x=>x.id===l.memberId);
+    const pay = payments.filter(p=>p.loanId===id);
+    html = `<p><strong>Member:</strong> ${m.name}</p>
+      <p><strong>Principal:</strong> रु${l.principal.toLocaleString()}</p>
+      <p><strong>Balance:</strong> रु${l.balance.toLocaleString()}</p>
+      <h4 class="font-bold mt-4">Payment History</h4>
+      <table class="w-full mt-2 border"><thead class="bg-gray-100"><tr><th class="p-2">Month</th><th class="p-2">Interest</th><th class="p-2">Principal</th><th class="p-2">Total</th></tr></thead><tbody>
+      ${pay.map(p=>`<tr><td class="p-2">${p.month}</td><td class="p-2">रु${(p.interest||0).toLocaleString()}</td><td class="p-2">रु${(p.principal||0).toLocaleString()}</td><td class="p-2">रु${(p.total||0).toLocaleString()}</td></tr>`).join('')}
+      </tbody></table>`;
+    title.textContent = `Loan Report`;
+  } else if(type==='payments'){
+    const pay = payments.filter(p=>p.loanId===id);
+    const l = loans.find(x=>x.id===id);
+    const m = members.find(x=>x.id===l.memberId);
+    html = `<h4 class="font-bold">Payments for ${m.name}'s Loan</h4>
+      <table class="w-full mt-2 border"><thead class="bg-gray-100"><tr><th class="p-2">Month</th><th class="p-2">Interest</th><th class="p-2">Principal</th><th class="p-2">Total</th><th class="p-2">Action</th></tr></thead><tbody>
+      ${pay.map(p=>`<tr><td class="p-2">${p.month}</td><td class="p-2">रु${(p.interest||0).toLocaleString()}</td><td class="p-2">रु${(p.principal||0).toLocaleString()}</td><td class="p-2">रु${(p.total||0).toLocaleString()}</td><td class="p-2"><button onclick="deletePayment('${p.id}','${id}');closeModal('reportModal')" class="text-red-600 text-xs">Delete</button></td></tr>`).join('')}
+      </tbody></table>`;
+    title.textContent = `Payments Report`;
+  }
+  content.innerHTML = html;
+  document.getElementById('reportModal').classList.remove('hidden');
+}
+function deleteSaving(id, memberId){
+  savings = savings.filter(s=>s.id!==id);
+  saveAllData();
+  renderSavings(); loadDashboard();
+}
+function deletePayment(id, loanId){
+  payments = payments.filter(p=>p.id!==id);
+  saveAllData();
+  updateLoanBalance(loanId);
+  renderPayments(); loadDashboard();
+}
+
+/* Utils */
+function closeModal(id){ document.getElementById(id).classList.add('hidden'); }
+function searchTable(tableId, query){
+  const rows = document.querySelectorAll(`#${tableId} tbody tr`);
+  rows.forEach(r=>r.style.display = r.textContent.toLowerCase().includes(query.toLowerCase()) ? '' : 'none');
+}
+
+/* On Load */
+window.onload = async () => {
+  await loadAllData();
+  const cuSnap = await db.ref('currentUser').once('value');
+  const cu = cuSnap.val();
+  if(cu){
+    currentUser = cu;
+    document.getElementById("authModal").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
+  }
+};
+</script>
+
+</body>
+</html>
