@@ -30,7 +30,7 @@
 </head>
 <body class="bg-gray-50 font-sans antialiased">
 
-  <!-- ==== AUTH MODAL ==== -->
+  <!-- AUTH MODAL -->
   <div id="authModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-8">
       <div class="flex items-center mb-6">
@@ -49,10 +49,10 @@
     </div>
   </div>
 
-  <!-- ==== MAIN APP ==== -->
+  <!-- MAIN APP -->
   <div id="app" class="hidden flex">
 
-    <!-- ==== SIDEBAR ==== -->
+    <!-- SIDEBAR -->
     <aside class="w-64 bg-white shadow-md h-screen sticky top-0 overflow-y-auto">
       <div class="p-6 border-b">
         <div class="flex items-center">
@@ -95,7 +95,7 @@
       </div>
     </aside>
 
-    <!-- ==== MAIN CONTENT ==== -->
+    <!-- MAIN CONTENT -->
     <main class="flex-1 p-6">
 
       <!-- Header -->
@@ -104,9 +104,8 @@
         <p id="headerSubtitle" class="text-sm text-gray-500"></p>
       </header>
 
-      <!-- ==== DASHBOARD ==== -->
+      <!-- DASHBOARD -->
       <section id="section-dashboard" class="space-y-6">
-        <!-- Stats -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div class="stat-card">
             <div>
@@ -138,7 +137,6 @@
           </div>
         </div>
 
-        <!-- Charts -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div class="chart-container">
             <h3 class="text-lg font-semibold mb-4">Savings vs Loans Trend</h3>
@@ -150,7 +148,6 @@
           </div>
         </div>
 
-        <!-- Quick Stats -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="stat-card">
             <p class="text-sm text-gray-500">Net Balance</p>
@@ -167,7 +164,7 @@
         </div>
       </section>
 
-      <!-- ==== MEMBERS ==== -->
+      <!-- MEMBERS -->
       <section id="section-members" class="hidden space-y-6">
         <div class="flex justify-between items-center">
           <h3 class="text-xl font-bold">Members (<span id="member-count">0</span>)</h3>
@@ -191,7 +188,7 @@
         </div>
       </section>
 
-      <!-- ==== SAVINGS ==== -->
+      <!-- SAVINGS -->
       <section id="section-savings" class="hidden space-y-6">
         <div class="flex justify-between items-center">
           <h3 class="text-xl font-bold">Savings (<span id="saving-count">0</span>)</h3>
@@ -215,7 +212,7 @@
         </div>
       </section>
 
-      <!-- ==== LOANS ==== -->
+      <!-- LOANS -->
       <section id="section-loans" class="hidden space-y-6">
         <div class="flex justify-between items-center">
           <h3 class="text-xl font-bold">Loans (<span id="loan-count">0</span>)</h3>
@@ -240,7 +237,7 @@
         </div>
       </section>
 
-      <!-- ==== PAYMENTS ==== -->
+      <!-- PAYMENTS -->
       <section id="section-payments" class="hidden space-y-6">
         <div class="flex justify-between items-center">
           <h3 class="text-xl font-bold">Payments (<span id="payment-count">0</span>)</h3>
@@ -262,7 +259,7 @@
         </div>
       </section>
 
-      <!-- ==== SETTINGS ==== -->
+      <!-- SETTINGS -->
       <section id="section-settings" class="hidden space-y-6">
         <h3 class="text-xl font-bold">User Management</h3>
         <button onclick="openAddUserModal()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Add User</button>
@@ -290,8 +287,8 @@
     </main>
   </div>
 
-  <!-- ==== MODALS (Add Member, Edit Member, etc.) ==== -->
-  <!-- Add Member Modal -->
+  <!-- MODALS -->
+  <!-- Add Member -->
   <div id="addMemberModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
       <h3 class="text-lg font-bold mb-4">Add New Member</h3>
@@ -315,7 +312,7 @@
     </div>
   </div>
 
-  <!-- Edit Member Modal (same fields, different IDs) -->
+  <!-- Edit Member -->
   <div id="editMemberModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
       <h3 class="text-lg font-bold mb-4">Edit Member</h3>
@@ -339,7 +336,7 @@
     </div>
   </div>
 
-  <!-- Add Loan Modal -->
+  <!-- Add Loan -->
   <div id="addLoanModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
       <h3 class="text-lg font-bold mb-4">Add New Loan</h3>
@@ -363,7 +360,7 @@
     </div>
   </div>
 
-  <!-- Add Saving Modal -->
+  <!-- Add Saving -->
   <div id="addSavingModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
       <h3 class="text-lg font-bold mb-4">Add Saving</h3>
@@ -385,7 +382,7 @@
     </div>
   </div>
 
-  <!-- Add Payment Modal -->
+  <!-- Add Payment -->
   <div id="addPaymentModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
       <h3 class="text-lg font-bold mb-4">Add Payment</h3>
@@ -409,7 +406,7 @@
     </div>
   </div>
 
-  <!-- Bulk Savings Modal -->
+  <!-- Bulk Savings -->
   <div id="bulkSavingsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
       <h3 class="text-lg font-bold mb-4">Bulk Savings Record</h3>
@@ -441,7 +438,7 @@
     </div>
   </div>
 
-  <!-- Add User Modal -->
+  <!-- Add User -->
   <div id="addUserModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
       <h3 class="text-lg font-bold mb-4">Add New User</h3>
@@ -481,18 +478,37 @@ const db = firebase.database();
 /* Global arrays */
 let users = [], members = [], savings = [], loans = [], payments = [], currentUser = null;
 
+/* Ensure default admin exists */
+async function ensureDefaultAdmin() {
+  const snap = await db.ref('users').once('value');
+  const existing = snap.val() || {};
+  const defaultAdmin = {email:"example.admin@gmail.com",password:"admin2082",name:"Ranjit Singh",role:"admin"};
+  if (!Object.values(existing).some(u => u.email === defaultAdmin.email)) {
+    await db.ref('users').push(defaultAdmin);
+  }
+}
+
 /* Load all data */
 async function loadAllData() {
+  await ensureDefaultAdmin();
   const snap = await db.ref('/').once('value');
   const data = snap.val() || {};
-  users    = data.users    || [{email:"example.admin@gmail.com",password:"admin2082",name:"Ranjit Singh",role:"admin"}];
-  members  = data.members  || [];
-  savings  = data.savings  || [];
-  loans    = data.loans    || [];
-  payments = data.payments || [];
+  users    = data.users    ? Object.values(data.users) : [{email:"example.admin@gmail.com",password:"admin2082",name:"Ranjit Singh",role:"admin"}];
+  members  = data.members  ? Object.values(data.members) : [];
+  savings  = data.savings  ? Object.values(data.savings) : [];
+  loans    = data.loans    ? Object.values(data.loans) : [];
+  payments = data.payments ? Object.values(data.payments) : [];
   updateUserInfo(); showSection('dashboard'); checkAuthorization();
 }
-function saveAllData() { db.ref('/').set({users, members, savings, loans, payments}); }
+function saveAllData() {
+  db.ref('/').set({
+    users:    users.reduce((o,u)=>{o[u.email]=u;return o;},{}),
+    members:  members.reduce((o,m)=>{o[m.id]=m;return o;},{}),
+    savings:  savings.reduce((o,s)=>{o[s.id]=s;return o;},{}),
+    loans:    loans.reduce((o,l)=>{o[l.id]=l;return o;},{}),
+    payments: payments.reduce((o,p)=>{o[p.id]=p;return o;},{})
+  });
+}
 
 /* ==================== AUTH ==================== */
 function handleSignIn(e) {
@@ -759,14 +775,13 @@ function addLoan(e){
 function openEditLoan(id){
   const l = loans.find(x=>x.id===id);
   if(!l) return;
-  const sel = document.getElementById('loanMemberId'); // reuse add modal fields
+  const sel = document.getElementById('loanMemberId');
   sel.innerHTML = members.map(m=>`<option value="${m.id}" ${m.id===l.memberId?'selected':''}>${m.name}</option>`).join('');
   document.getElementById('loanPrincipal').value = l.principal;
   document.getElementById('loanRate').value = l.rate;
   document.getElementById('loanDuration').value = l.duration;
   document.getElementById('loanDate').value = l.date;
   document.getElementById('loanStatus').value = l.status;
-  // We'll reuse addLoanModal for edit – just change form submit
   const form = document.querySelector('#addLoanModal form');
   form.onsubmit = function(ev){
     ev.preventDefault();
