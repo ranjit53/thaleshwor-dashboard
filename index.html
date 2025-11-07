@@ -23,6 +23,7 @@
     .form-grid { @apply grid grid-cols-1 md:grid-cols-2 gap-4; }
     .form-grid .full { @apply md:col-span-2; }
     .small-chart { height: 250px !important; }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body class="bg-gray-50 font-sans antialiased">
@@ -62,22 +63,22 @@
       </div>
 
       <nav class="flex flex-col flex-1 overflow-y-auto px-3 py-4 space-y-1">
-        <a href="#" id="nav-dashboard" onclick="showSection('dashboard')" class="sidebar-link active">
+        <a href="#" onclick="showSection('dashboard', event)" class="sidebar-link active">
           <i class="fas fa-tachometer-alt sidebar-icon text-blue-600"></i> Dashboard
         </a>
-        <a href="#" id="nav-members" onclick="showSection('members')" class="sidebar-link">
+        <a href="#" onclick="showSection('members', event)" class="sidebar-link">
           <i class="fas fa-users sidebar-icon text-purple-600"></i> Members
         </a>
-        <a href="#" id="nav-savings" onclick="showSection('savings')" class="sidebar-link">
+        <a href="#" onclick="showSection('savings', event)" class="sidebar-link">
           <i class="fas fa-piggy-bank sidebar-icon text-green-600"></i> Savings
         </a>
-        <a href="#" id="nav-loans" onclick="showSection('loans')" class="sidebar-link">
+        <a href="#" onclick="showSection('loans', event)" class="sidebar-link">
           <i class="fas fa-hand-holding-usd sidebar-icon text-orange-600"></i> Loans
         </a>
-        <a href="#" id="nav-payments" onclick="showSection('payments')" class="sidebar-link">
+        <a href="#" onclick="showSection('payments', event)" class="sidebar-link">
           <i class="fas fa-file-invoice-dollar sidebar-icon text-pink-600"></i> Payments
         </a>
-        <a href="#" id="nav-settings" onclick="showSection('settings')" class="sidebar-link">
+        <a href="#" id="nav-settings" onclick="showSection('settings', event)" class="sidebar-link">
           <i class="fas fa-cog sidebar-icon text-gray-600"></i> Settings
         </a>
       </nav>
@@ -180,12 +181,11 @@
           <div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-gray-50 border-b"><tr><th class="text-left p-3">Name</th><th class="text-left p-3">Email</th><th class="text-left p-3">Role</th><th class="text-left p-3">Actions</th></tr></thead><tbody id="user-list"></tbody></table></div>
 
           <h3 class="text-lg font-semibold mt-8 mb-4">Bulk Savings Entry</h3>
-          <p class="text-sm text-gray-600 mb-4">Record the same saving amount for all <strong>active</strong> members for a specific month.</p>
           <form onsubmit="recordBulkSavings(event)" class="form-grid">
             <div><label class="block text-sm font-medium text-gray-700 mb-1">Month *</label><input type="month" id="bulkSavingMonth" required class="w-full px-4 py-2 border rounded-md"></div>
-            <div><label class="block text-sm font-medium text-gray-700 mb-1">Amount (रु) *</label><input type="number" id="bulkSavingAmount" required class="w-full px-4 py-2 border rounded-md" placeholder="e.g., 500"></div>
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Amount (रु) *</label><input type="number" id="bulkSavingAmount" required class="w-full px-4 py-2 border rounded-md"></div>
             <div class="full"><label class="block text-sm font-medium text-gray-700 mb-1">Status</label><select id="bulkSavingStatus" class="w-full px-4 py-2 border rounded-md"><option>Paid</option><option>Pending</option></select></div>
-            <div class="full mt-2"><button type="submit" class="w-full md:w-auto bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"><i class="fas fa-users-cog mr-2"></i> Record for All Active Members</button></div>
+            <div class="full mt-2"><button type="submit" class="w-full md:w-auto bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">Record for All Active Members</button></div>
           </form>
 
           <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -201,12 +201,12 @@
         <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl p-6">
           <h3 class="text-xl font-bold mb-4">Add New Member</h3>
           <form onsubmit="addMember(event)" class="form-grid">
-            <div><label class="block text-sm font-medium text-gray-700 mb-1">Member ID *</label><input type="text" id="memberId" readonly class="w-full px-4 py-2 border rounded-md bg-gray-100" placeholder="e.g., M001"></div>
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Member ID *</label><input type="text" id="memberId" readonly class="w-full px-4 py-2 border rounded-md bg-gray-100"></div>
             <div class="full"><label class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label><input type="text" id="memberName" required class="w-full px-4 py-2 border rounded-md"></div>
             <div><label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label><input type="text" id="memberPhone" class="w-full px-4 py-2 border rounded-md"></div>
             <div><label class="block text-sm font-medium text-gray-700 mb-1">Join Date *</label><input type="date" id="memberDate" required class="w-full px-4 py-2 border rounded-md"></div>
             <div class="full"><label class="block text-sm font-medium text-gray-700 mb-1">Status</label><select id="memberStatus" class="w-full px-4 py-2 border rounded-md"><option>Active</option><option>Inactive</option></select></div>
-            <div class="full"><label class="block text-sm font-medium text-gray-700 mb-1">Residential Address</label><input type="text" id="memberAddress" class="w-full px-4 py-2 border rounded-md"></div>
+            <div class="full"><label class="block text-sm font-medium text-gray-700 mb-1">Address</label><input type="text" id="memberAddress" class="w-full px-4 py-2 border rounded-md"></div>
             <div class="full flex justify-end space-x-2"><button type="button" onclick="closeModal('addMemberModal')" class="px-4 py-2 border rounded-md">Cancel</button><button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Add Member</button></div>
           </form>
         </div>
@@ -218,12 +218,12 @@
           <h3 class="text-xl font-bold mb-4">Distribute New Loan</h3>
           <form onsubmit="addLoan(event)" class="form-grid">
             <div><label class="block text-sm font-medium text-gray-700 mb-1">Member *</label><select id="loanMemberId" required class="w-full px-4 py-2 border rounded-md"></select></div>
-            <div><label class="block text-sm font-medium text-gray-700 mb-1">Principal Amount (रु) *</label><input type="number" id="loanPrincipal" required class="w-full px-4 py-2 border rounded-md"></div>
-            <div><label class="block text-sm font-medium text-gray-700 mb-1">Annual Interest Rate (%) *</label><input type="number" id="loanRate" step="0.1" required class="w-full px-4 py-2 border rounded-md"></div>
-            <div><label class="block text-sm font-medium text-gray-700 mb-1">Loan Date *</label><input type="date" id="loanDate" required class="w-full px-4 py-2 border rounded-md"></div>
-            <div><label class="block text-sm font-medium text-gray-700 mb-1">Duration (Months) *</label><input type="number" id="loanDuration" required class="w-full px-4 py-2 border rounded-md"></div>
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Principal (रु) *</label><input type="number" id="loanPrincipal" required class="w-full px-4 py-2 border rounded-md"></div>
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Rate (%)</label><input type="number" id="loanRate" step="0.1" value="10" class="w-full px-4 py-2 border rounded-md"></div>
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Date *</label><input type="date" id="loanDate" required class="w-full px-4 py-2 border rounded-md"></div>
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Duration (Months)</label><input type="number" id="loanDuration" value="12" class="w-full px-4 py-2 border rounded-md"></div>
             <div class="full"><label class="block text-sm font-medium text-gray-700 mb-1">Status</label><select id="loanStatus" class="w-full px-4 py-2 border rounded-md"><option>Active</option><option>Inactive</option></select></div>
-            <div class="full flex justify-end space-x-2"><button type="button" onclick="closeModal('addLoanModal')" class="px-4 py-2 border rounded-md">Cancel</button><button type="submit" class="px-6 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700">Distribute Loan</button></div>
+            <div class="full flex justify-end space-x-2"><button type="button" onclick="closeModal('addLoanModal')" class="px-4 py-2 border rounded-md">Cancel</button><button type="submit" class="px-6 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700">Distribute</button></div>
           </form>
         </div>
       </div>
@@ -231,13 +231,13 @@
       <!-- Add Saving -->
       <div id="addSavingModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl p-6">
-          <h3 class="text-xl font-bold mb-4">Record Monthly Saving</h3>
+          <h3 class="text-xl font-bold mb-4">Record Saving</h3>
           <form onsubmit="addSaving(event)" class="form-grid">
             <div><label class="block text-sm font-medium text-gray-700 mb-1">Member *</label><select id="savingMemberId" required class="w-full px-4 py-2 border rounded-md"></select></div>
             <div><label class="block text-sm font-medium text-gray-700 mb-1">Amount (रु) *</label><input type="number" id="savingAmount" required class="w-full px-4 py-2 border rounded-md"></div>
             <div class="full"><label class="block text-sm font-medium text-gray-700 mb-1">Month *</label><input type="month" id="savingMonth" required class="w-full px-4 py-2 border rounded-md"></div>
-            <div class="full"><label class="block text-sm font-medium text-gray-700 mb-1">Payment Status</label><select id="savingStatus" class="w-full px-4 py-2 border rounded-md"><option>Paid</option><option>Pending</option></select></div>
-            <div class="full flex justify-end space-x-2"><button type="button" onclick="closeModal('addSavingModal')" class="px-4 py-2 border rounded-md">Cancel</button><button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">Record Saving</button></div>
+            <div class="full"><label class="block text-sm font-medium text-gray-700 mb-1">Status</label><select id="savingStatus" class="w-full px-4 py-2 border rounded-md"><option>Paid</option><option>Pending</option></select></div>
+            <div class="full flex justify-end space-x-2"><button type="button" onclick="closeModal('addSavingModal')" class="px-4 py-2 border rounded-md">Cancel</button><button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">Save</button></div>
           </form>
         </div>
       </div>
@@ -245,22 +245,17 @@
       <!-- Add Payment -->
       <div id="addPaymentModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl p-6">
-          <h3 class="text-xl font-bold mb-4">Record Loan Payment</h3>
+          <h3 class="text-xl font-bold mb-4">Record Payment</h3>
           <form onsubmit="addPayment(event)" class="form-grid">
-            <div><label class="block text-sm font-medium text-gray-700 mb-1">Select Loan *</label><select id="paymentLoanId" required class="w-full px-4 py-2 border rounded-md"></select></div>
-            <div><label class="block text-sm font-medium text-gray-700 mb-1">Payment Month *</label><input type="month" id="paymentMonth" required class="w-full px-4 py-2 border rounded-md"></div>
-            <div><label class="block text-sm font-medium text-gray-700 mb-1">Interest Amount (रु) *</label><input type="number" id="paymentInterest" required class="w-full px-4 py-2 border rounded-md" oninput="calculatePaymentTotal('paymentInterest','paymentPrincipal','paymentTotal')"></div>
-            <div><label class="block text-sm font-medium text-gray-700 mb-1">Principal Amount (रु)</label><input type="number" id="paymentPrincipal" class="w-full px-4 py-2 border rounded-md" oninput="calculatePaymentTotal('paymentInterest','paymentPrincipal','paymentTotal')"></div>
-            <div class="full"><label class="block text-sm font-medium text-gray-700 mb-1">Total Payment (रु)</label><input type="number" id="paymentTotal" readonly class="w-full px-4 py-2 border rounded-md bg-gray-100"></div>
-            <div><label class="block text-sm font-medium text-gray-700 mb-1">Payment Date</label><input type="date" id="paymentDate" class="w-full px-4 py-2 border rounded-md"></div>
-            <div class="full"><label class="block text-sm font-medium text-gray-700 mb-1">Payment Status</label><select id="paymentStatus" class="w-full px-4 py-2 border rounded-md"><option>Pending</option><option>Paid</option></select></div>
-            <div class="full flex justify-end space-x-2"><button type="button" onclick="closeModal('addPaymentModal')" class="px-4 py-2 border rounded-md">Cancel</button><button type="submit" class="px-6 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700">Record Payment</button></div>
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Loan *</label><select id="paymentLoanId" required class="w-full px-4 py-2 border rounded-md"></select></div>
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Month *</label><input type="month" id="paymentMonth" required class="w-full px-4 py-2 border rounded-md"></div>
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Interest (रु)</label><input type="number" id="paymentInterest" value="0" class="w-full px-4 py-2 border rounded-md" oninput="calcTotal()"></div>
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Principal (रु)</label><input type="number" id="paymentPrincipal" value="0" class="w-full px-4 py-2 border rounded-md" oninput="calcTotal()"></div>
+            <div class="full"><label class="block text-sm font-medium text-gray-700 mb-1">Total</label><input type="number" id="paymentTotal" readonly class="w-full px-4 py-2 border rounded-md bg-gray-100"></div>
+            <div class="full flex justify-end space-x-2"><button type="button" onclick="closeModal('addPaymentModal')" class="px-4 py-2 border rounded-md">Cancel</button><button type="submit" class="px-6 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700">Save</button></div>
           </form>
         </div>
       </div>
-
-      <!-- Edit Member / Loan / Saving / Payment (similar structure – omitted for brevity, but included in full script below) -->
-      <!-- (All edit modals are in the script section) -->
 
       <!-- Report Modal -->
       <div id="reportModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -277,25 +272,21 @@
     </main>
   </div>
 
-  <!-- ==================== SCRIPT (Firebase + Logic) ==================== -->
+  <!-- ==================== SCRIPT ==================== -->
   <script type="module">
-    // ---------- Firebase ----------
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
     import { getDatabase, ref, onValue, set, push, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBd-ogOEv472kKWG9cLpbsFQBAK-i-0grw",
       authDomain: "thaleshwor-mahadev-samuh.firebaseapp.com",
+      databaseURL: "https://thaleshwor-mahadev-samuh-default-rtdb.firebaseio.com/",
       projectId: "thaleshwor-mahadev-samuh",
       storageBucket: "thaleshwor-mahadev-samuh.appspot.com",
       messagingSenderId: "590950394483",
-      appId: "1:590950394483:web:24f9db2fb8a68295e49806",
-      measurementId: "G-SQQB3TYVQD",
-      databaseURL: "https://thaleshwor-mahadev-samuh-default-rtdb.firebaseio.com/"   // <-- IMPORTANT
+      appId: "1:590950394483:web:24f9db2fb8a68295e49806"
     };
     const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
     const db = getDatabase(app);
 
     const dbRefs = {
@@ -306,69 +297,55 @@
       payments: ref(db, 'app/payments')
     };
 
-    // ---------- Global Data ----------
     let users = [], members = [], savings = [], loans = [], payments = [];
     let currentUser = null;
     let lineChart = null, pieChart = null;
 
-    // ---------- Real-time Listeners ----------
+    // Load data
     onValue(dbRefs.users, s => { users = s.val() ? Object.values(s.val()) : []; renderUsers(); });
-    onValue(dbRefs.members, s => { members = s.val() ? Object.values(s.val()) : []; renderMembers(); updateDashboardIfOpen(); });
-    onValue(dbRefs.savings, s => { savings = s.val() ? Object.values(s.val()) : []; renderSavings(); updateDashboardIfOpen(); });
-    onValue(dbRefs.loans, s => { loans = s.val() ? Object.values(s.val()) : []; renderLoans(); updateDashboardIfOpen(); });
-    onValue(dbRefs.payments, s => { payments = s.val() ? Object.values(s.val()) : []; renderPayments(); updateDashboardIfOpen(); });
+    onValue(dbRefs.members, s => { members = s.val() ? Object.values(s.val()) : []; renderMembers(); updateDashboard(); });
+    onValue(dbRefs.savings, s => { savings = s.val() ? Object.values(s.val()) : []; renderSavings(); updateDashboard(); });
+    onValue(dbRefs.loans, s => { loans = s.val() ? Object.values(s.val()) : []; renderLoans(); updateDashboard(); });
+    onValue(dbRefs.payments, s => { payments = s.val() ? Object.values(s.val()) : []; renderPayments(); updateDashboard(); });
 
-    function updateDashboardIfOpen() { if (!document.getElementById('section-dashboard').classList.contains('hidden')) loadDashboard(); }
+    function updateDashboard() { if (document.getElementById('section-dashboard').classList.contains('hidden')) return; loadDashboard(); }
 
-    // ---------- CRUD Helpers ----------
-    async function addItem(col, obj) {
-      const newRef = push(dbRefs[col]);
-      obj.id = newRef.key;
-      await set(newRef, obj);
-    }
-    async function updateItem(col, id, updates) { await set(ref(db, `app/${col}/${id}`), updates); }
-    async function deleteItem(col, id) { await remove(ref(db, `app/${col}/${id}`)); }
-
-    // ---------- Auth ----------
+    // Auth
     function handleSignIn(e) {
       e.preventDefault();
       const email = document.getElementById('signinEmail').value.trim().toLowerCase();
-      const password = document.getElementById('signinPassword').value.trim();
+      const password = document.getElementById('signinPassword').value;
       const user = users.find(u => u.email.toLowerCase() === email && u.password === password);
-      if (!user) return alert('Invalid credentials');
+      if (!user) return alert('Invalid login');
       currentUser = user;
       localStorage.setItem('currentUser', JSON.stringify(user));
       document.getElementById('authModal').classList.add('hidden');
       document.getElementById('app').classList.remove('hidden');
-      updateUserInfo(); showSection('dashboard');
+      updateUserInfo();
+      showSection('dashboard');
     }
     function logout() { localStorage.removeItem('currentUser'); location.reload(); }
     function updateUserInfo() {
       const u = currentUser || JSON.parse(localStorage.getItem('currentUser')||'null');
       if (!u) return;
-      const name = u.name || u.email.split('@')[0];
-      document.getElementById('userNameSmall').textContent = name;
+      document.getElementById('userNameSmall').textContent = u.name || u.email.split('@')[0];
       document.getElementById('userRoleSmall').textContent = u.role;
-      document.getElementById('userAvatarSmall').textContent = name.charAt(0).toUpperCase();
+      document.getElementById('userAvatarSmall').textContent = (u.name || u.email)[0].toUpperCase();
     }
-    function isAdmin() { const u = currentUser || JSON.parse(localStorage.getItem('currentUser')||'null'); return u && u.role === 'admin'; }
+    function isAdmin() { const u = currentUser || JSON.parse(localStorage.getItem('currentUser')||'null'); return u?.role === 'admin'; }
 
-    // ---------- Navigation ----------
-    function showSection(id) {
-      if (id === 'settings' && !isAdmin()) id = 'dashboard';
-      document.querySelectorAll('main section').forEach(s => s.classList.add('hidden'));
+    // Navigation
+    function showSection(id, e) {
+      if (e) e.preventDefault();
+      if (id === 'settings' && !isAdmin()) { alert('Admins only'); return; }
+      document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
       document.getElementById(`section-${id}`).classList.remove('hidden');
       document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-      document.getElementById(`nav-${id}`).classList.add('active');
-      const titles = { dashboard:['Dashboard','Overview'], members:['Members','Manage'], savings:['Savings','Track'], loans:['Loans','Manage'], payments:['Payments','Track'], settings:['Settings','Users'] };
+      document.querySelector(`[onclick="showSection('${id}', event)"]`)?.classList.add('active');
+      const titles = { dashboard: ['Dashboard', 'Overview'], members: ['Members', 'Manage'], savings: ['Savings', 'Track'], loans: ['Loans', 'Manage'], payments: ['Payments', 'Track'], settings: ['Settings', 'Users'] };
       document.getElementById('headerTitle').textContent = titles[id][0];
       document.getElementById('headerSubtitle').textContent = titles[id][1];
       if (id === 'dashboard') loadDashboard();
-      else if (id === 'members') renderMembers();
-      else if (id === 'savings') renderSavings();
-      else if (id === 'loans') renderLoans();
-      else if (id === 'payments') renderPayments();
-      else if (id === 'settings') renderUsers();
       checkAdminUI();
     }
     function checkAdminUI() {
@@ -377,149 +354,159 @@
       document.querySelectorAll('.admin-only').forEach(el => el.style.display = admin ? '' : 'none');
     }
 
-    // ---------- Dashboard ----------
-    function loadDashboard() { updateStats(); renderLineChart(); renderPieChart(); updateDefaulters(); }
+    // Dashboard
+    function loadDashboard() {
+      updateStats(); renderCharts(); updateDefaulters();
+    }
     function updateStats() {
       document.getElementById('stat-members').textContent = members.length;
-      const totalSav = savings.reduce((a,s)=>a+(parseFloat(s.amount)||0),0);
+      const totalSav = savings.reduce((a,s) => a + (parseFloat(s.amount)||0), 0);
       document.getElementById('stat-savings').textContent = `रु${totalSav.toLocaleString()}`;
-      const activeBal = loans.filter(l=>l.status==='Active').reduce((a,l)=>a+(parseFloat(l.balance)||0),0);
-      document.getElementById('stat-loans').textContent = `रु${activeBal.toLocaleString()}`;
-      const interest = payments.reduce((a,p)=>a+(parseFloat(p.interest)||0),0);
+      const activeLoans = loans.filter(l => l.status === 'Active').reduce((a,l) => a + (parseFloat(l.balance)||0), 0);
+      document.getElementById('stat-loans').textContent = `रु${activeLoans.toLocaleString()}`;
+      const interest = payments.reduce((a,p) => a + (parseFloat(p.interest)||0), 0);
       document.getElementById('stat-interest').textContent = `रु${interest.toLocaleString()}`;
-      const balance = totalSav - activeBal;
-      document.getElementById('stat-balance').textContent = `रु${balance.toLocaleString()}`;
-      const months = getAllMonths();
-      if (months.length < 2) { document.getElementById('stat-growth').textContent = '0%'; }
-      else {
-        const savMap = aggregateByMonth(savings,'month','amount');
-        const first = savMap[months[0]]||0, last = savMap[months[months.length-1]]||0;
-        const growth = first===0?0:((last-first)/first)*100;
-        document.getElementById('stat-growth').textContent = (growth>0?'+':'')+growth.toFixed(1)+'%';
-      }
+      document.getElementById('stat-balance').textContent = `रु${(totalSav - activeLoans).toLocaleString()}`;
     }
-    function renderLineChart() {
-      const ctx = document.getElementById('lineChart').getContext('2d');
+    function renderCharts() {
+      const months = [...new Set([...savings.map(s=>s.month), ...loans.map(l=>l.date.slice(0,7))])].sort();
+      const savMap = months.reduce((a,m) => (a[m] = savings.filter(s=>s.month===m).reduce((t,s)=>t+(parseFloat(s.amount)||0),0), a), {});
+      const loanMap = months.reduce((a,m) => (a[m] = loans.filter(l=>l.date.startsWith(m)).reduce((t,l)=>t+(parseFloat(l.principal)||0),0), a), {});
+
+      // Line Chart
+      const ctxLine = document.getElementById('lineChart').getContext('2d');
       if (lineChart) lineChart.destroy();
-      const months = getAllMonths();
-      const savMap = aggregateByMonth(savings,'month','amount');
-      const loanMap = aggregateByMonth(loans,'date','principal');
-      const savData = months.map(m=>savMap[m]||0);
-      const loanData = months.map(m=>loanMap[m]||0);
-      const labels = months.map(m=>new Date(m+'-01').toLocaleString('en-US',{month:'short',year:'2-digit'}));
-      lineChart = new Chart(ctx, {type:'line',data:{labels,datasets:[
-        {label:'Savings',data:savData,borderColor:'#10b981',tension:0.4},
-        {label:'Loans',data:loanData,borderColor:'#3b82f6',tension:0.4}
-      ]},options:{responsive:true,plugins:{legend:{position:'bottom'}},maintainAspectRatio:false}});
-    }
-    function renderPieChart() {
-      const ctx = document.getElementById('pieChart').getContext('2d');
+      lineChart = new Chart(ctxLine, { type: 'line', data: { labels: months.map(m => new Date(m+'-01').toLocaleString('default', { month: 'short', year: '2-digit' })), datasets: [
+        { label: 'Savings', data: months.map(m=>savMap[m]||0), borderColor: '#10b981', tension: 0.4 },
+        { label: 'Loans', data: months.map(m=>loanMap[m]||0), borderColor: '#3b82f6', tension: 0.4 }
+      ]}, options: { responsive: true, maintainAspectRatio: false } });
+
+      // Pie Chart
+      const ctxPie = document.getElementById('pieChart').getContext('2d');
       if (pieChart) pieChart.destroy();
-      const map = {};
-      loans.forEach(l=>{ const m = members.find(x=>x.id===l.memberId); const n = m?.name||'Unknown'; map[n]=(map[n]||0)+parseFloat(l.principal||0); });
-      const labels = Object.keys(map), data = Object.values(map);
-      const colors = ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#6366f1','#14b8a6','#d946ef'];
-      pieChart = new Chart(ctx, {type:'doughnut',data:{labels,datasets:[{data,backgroundColor:labels.map((_,i)=>colors[i%colors.length])}]},options:{responsive:true,plugins:{legend:{position:'bottom'}},maintainAspectRatio:false}});
+      const loanByMember = loans.reduce((a,l) => { a[l.memberId] = (a[l.memberId]||0) + parseFloat(l.principal); return a; }, {});
+      const labels = Object.keys(loanByMember).map(id => members.find(m=>m.id===id)?.name || 'Unknown');
+      pieChart = new Chart(ctxPie, { type: 'doughnut', data: { labels, datasets: [{ data: Object.values(loanByMember), backgroundColor: ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6'] }] }, options: { responsive: true, maintainAspectRatio: false } });
     }
     function updateDefaulters() {
       const cur = new Date().toISOString().slice(0,7);
       const paidSav = new Set(savings.filter(s=>s.month===cur).map(s=>s.memberId));
-      document.getElementById('defaulters-savings').textContent = members.filter(m=>!paidSav.has(m.id)).length;
+      document.getElementById('defaulters-savings').textContent = members.filter(m=>m.status==='Active' && !paidSav.has(m.id)).length;
       const paidLoan = new Set(payments.filter(p=>p.month===cur).map(p=>p.loanId));
       document.getElementById('defaulters-loans').textContent = loans.filter(l=>l.status==='Active' && !paidLoan.has(l.id)).length;
     }
 
-    // ---------- Render Tables ----------
+    // Render Tables
     function renderMembers() {
       const tbody = document.getElementById('member-list');
       document.getElementById('member-count').textContent = members.length;
-      tbody.innerHTML = members.map(m=>`
+      tbody.innerHTML = members.map(m => `
         <tr class="border-b hover:bg-gray-50">
-          <td class="p-3">${m.id}</td><td class="p-3">${m.name}</td><td class="p-3">${m.phone||'-'}</td><td class="p-3">${m.joinDate}</td>
+          <td class="p-3">${m.id}</td>
+          <td class="p-3">${m.name}</td>
+          <td class="p-3">${m.phone||'-'}</td>
+          <td class="p-3">${m.joinDate}</td>
           <td class="p-3"><span class="${m.status==='Active'?'badge-active':'badge-inactive'}">${m.status}</span></td>
           <td class="p-3 space-x-2">
-            <button onclick="showReportModal('member','${m.id}')" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-xs font-semibold">Review</button>
-            <button onclick="openEditMember('${m.id}')" class="text-blue-600 hover:underline text-xs admin-only">Edit</button>
+            <button onclick="showReport('member', '${m.id}')" class="bg-blue-600 text-white px-3 py-1 rounded text-xs">Review</button>
             <button onclick="deleteMember('${m.id}')" class="text-red-600 hover:underline text-xs admin-only">Delete</button>
           </td>
         </tr>`).join('') || '<tr><td colspan="6" class="p-3 text-center text-gray-500">No members</td></tr>';
     }
     function renderSavings() {
       const tbody = document.getElementById('saving-list');
-      const grouped = Object.values(savings.reduce((a,s)=>{a[s.memberId]=(a[s.memberId]||{total:0,memberId:s.memberId});a[s.memberId].total+=parseFloat(s.amount)||0;return a;},{}));
+      const grouped = Object.values(savings.reduce((a,s) => { a[s.memberId] = (a[s.memberId]||{total:0}); a[s.memberId].total += parseFloat(s.amount)||0; return a; }, {}));
       document.getElementById('saving-count').textContent = grouped.length;
-      tbody.innerHTML = grouped.map(g=>{const m=members.find(x=>x.id===g.memberId);return `<tr class="border-b hover:bg-gray-50"><td class="p-3">${m?.name||'Unknown'}</td><td class="p-3 font-semibold">रु${g.total.toLocaleString()}</td><td class="p-3"><button onclick="showReportModal('savings','${g.memberId}')" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-xs font-semibold">Review</button></td></tr>`;}).join('')||'<tr><td colspan="3" class="p-3 text-center text-gray-500">No savings</td></tr>';
+      tbody.innerHTML = grouped.map(g => {
+        const m = members.find(x=>x.id===g.memberId);
+        return `<tr class="border-b hover:bg-gray-50"><td class="p-3">${m?.name||'Unknown'}</td><td class="p-3 font-semibold">रु${g.total.toLocaleString()}</td><td class="p-3"><button onclick="showReport('savings', '${g.memberId}')" class="bg-blue-600 text-white px-3 py-1 rounded text-xs">Review</button></td></tr>`;
+      }).join('') || '<tr><td colspan="3" class="p-3 text-center text-gray-500">No savings</td></tr>';
     }
     function renderLoans() {
       const tbody = document.getElementById('loan-list');
       document.getElementById('loan-count').textContent = loans.length;
-      tbody.innerHTML = loans.map(l=>{const m=members.find(x=>x.id===l.memberId);return `<tr class="border-b hover:bg-gray-50"><td class="p-3">${m?.name||'Unknown'}</td><td class="p-3">रु${(l.principal||0).toLocaleString()}</td><td class="p-3 font-semibold">रु${(l.balance||0).toLocaleString()}</td><td class="p-3">${l.rate||0}%</td><td class="p-3">${l.date||'-'}</td><td class="p-3"><span class="${l.status==='Active'?'badge-active':'badge-inactive'}">${l.status||'N/A'}</span></td><td class="p-3 space-x-2"><button onclick="showReportModal('loan','${l.id}')" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-xs font-semibold">Review</button><button onclick="openEditLoan('${l.id}')" class="text-blue-600 hover:underline text-xs admin-only">Edit</button><button onclick="deleteLoan('${l.id}')" class="text-red-600 hover:underline text-xs admin-only">Delete</button></td></tr>`;}).join('')||'<tr><td colspan="7" class="p-3 text-center text-gray-500">No loans</td></tr>';
-      checkAdminUI();
+      tbody.innerHTML = loans.map(l => {
+        const m = members.find(x=>x.id===l.memberId);
+        return `<tr class="border-b hover:bg-gray-50">
+          <td class="p-3">${m?.name||'Unknown'}</td>
+          <td class="p-3">रु${(l.principal||0).toLocaleString()}</td>
+          <td class="p-3 font-semibold">रु${(l.balance||0).toLocaleString()}</td>
+          <td class="p-3">${l.rate||0}%</td>
+          <td class="p-3">${l.date||'-'}</td>
+          <td class="p-3"><span class="${l.status==='Active'?'badge-active':'badge-inactive'}">${l.status}</span></td>
+          <td class="p-3 space-x-2">
+            <button onclick="showReport('loan', '${l.id}')" class="bg-blue-600 text-white px-3 py-1 rounded text-xs">Review</button>
+            <button onclick="deleteLoan('${l.id}')" class="text-red-600 hover:underline text-xs admin-only">Delete</button>
+          </td>
+        </tr>`;
+      }).join('') || '<tr><td colspan="7" class="p-3 text-center text-gray-500">No loans</td></tr>';
     }
     function renderPayments() {
       const tbody = document.getElementById('payment-list');
-      const grouped = Object.values(payments.reduce((a,p)=>{a[p.loanId]=(a[p.loanId]||{total:0,loanId:p.loanId});a[p.loanId].total+=parseFloat(p.total)||0;return a;},{}));
+      const grouped = Object.values(payments.reduce((a,p) => { a[p.loanId] = (a[p.loanId]||{total:0}); a[p.loanId].total += parseFloat(p.total)||0; return a; }, {}));
       document.getElementById('payment-count').textContent = grouped.length;
-      tbody.innerHTML = grouped.map(g=>{const l=loans.find(x=>x.id===g.loanId);const m=members.find(x=>x.id===l?.memberId);return `<tr class="border-b hover:bg-gray-50"><td class="p-3">${m?.name||'Unknown'}</td><td class="p-3">रु${(l?.principal||0).toLocaleString()}</td><td class="p-3 font-semibold">रु${g.total.toLocaleString()}</td><td class="p-3"><button onclick="showReportModal('payments','${g.loanId}')" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-xs font-semibold">Review</button></td></tr>`;}).join('')||'<tr><td colspan="4" class="p-3 text-center text-gray-500">No payments</td></tr>';
+      tbody.innerHTML = grouped.map(g => {
+        const l = loans.find(x=>x.id===g.loanId);
+        const m = members.find(x=>x.id===l?.memberId);
+        return `<tr class="border-b hover:bg-gray-50"><td class="p-3">${m?.name||'Unknown'}</td><td class="p-3">रु${(l?.principal||0).toLocaleString()}</td><td class="p-3 font-semibold">रु${g.total.toLocaleString()}</td><td class="p-3"><button onclick="showReport('payments', '${g.loanId}')" class="bg-blue-600 text-white px-3 py-1 rounded text-xs">Review</button></td></tr>`;
+      }).join('') || '<tr><td colspan="4" class="p-3 text-center text-gray-500">No payments</td></tr>';
     }
     function renderUsers() {
       const tbody = document.getElementById('user-list');
-      tbody.innerHTML = users.map(u=>`<tr class="border-b"><td class="p-3">${u.name}</td><td class="p-3">${u.email}</td><td class="p-3"><span class="px-2 py-1 rounded-full text-xs ${u.role==='admin'?'bg-purple-100 text-purple-800':'bg-gray-100 text-gray-800'}">${u.role}</span></td><td class="p-3">${u.email!=='example.admin@gmail.com'?`<button onclick="deleteUser('${u.email}')" class="text-red-600 hover:underline text-xs">Delete</button>`:''}</td></tr>`).join('');
+      tbody.innerHTML = users.map(u => `<tr class="border-b"><td class="p-3">${u.name}</td><td class="p-3">${u.email}</td><td class="p-3"><span class="px-2 py-1 rounded-full text-xs ${u.role==='admin'?'bg-purple-100 text-purple-800':'bg-gray-100 text-gray-800'}">${u.role}</span></td><td class="p-3">${u.email!=='example.admin@gmail.com' ? `<button onclick="deleteUser('${u.id}')" class="text-red-600 hover:underline text-xs">Delete</button>` : ''}</td></tr>`).join('');
     }
 
-    // ---------- Modals ----------
+    // Modals
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+    function showAddMemberForm() { if (!isAdmin()) return; document.getElementById('memberId').value = generateId(); document.getElementById('memberDate').valueAsDate = new Date(); document.getElementById('addMemberModal').classList.remove('hidden'); }
+    async function addMember(e) { e.preventDefault(); await addItem('members', { id: document.getElementById('memberId').value, name: document.getElementById('memberName').value, phone: document.getElementById('memberPhone').value, joinDate: document.getElementById('memberDate').value, status: document.getElementById('memberStatus').value, address: document.getElementById('memberAddress').value }); closeModal('addMemberModal'); }
+    async function deleteMember(id) { if (!confirm('Delete?')) return; await deleteItem('members', id); closeModal('reportModal'); }
 
-    // Add Member
-    function showAddMemberForm() { if(!isAdmin())return alert('Admins only'); document.getElementById('memberId').value=generateMemberId(); document.getElementById('memberDate').valueAsDate=new Date(); document.getElementById('addMemberModal').classList.remove('hidden'); }
-    async function addMember(e){e.preventDefault();await addItem('members',{id:document.getElementById('memberId').value,name:document.getElementById('memberName').value,phone:document.getElementById('memberPhone').value,joinDate:document.getElementById('memberDate').value,status:document.getElementById('memberStatus').value,address:document.getElementById('memberAddress').value});closeModal('addMemberModal');}
-    function openEditMember(id){if(!isAdmin())return;const m=members.find(x=>x.id===id);if(!m)return;document.getElementById('editMemberId').value=m.id;document.getElementById('editMemberName').value=m.name;document.getElementById('editMemberPhone').value=m.phone;document.getElementById('editMemberDate').value=m.joinDate;document.getElementById('editMemberStatus').value=m.status;document.getElementById('editMemberAddress').value=m.address;document.getElementById('editMemberModal').classList.remove('hidden');}
-    async function saveEditedMember(e){e.preventDefault();await updateItem('members',document.getElementById('editMemberId').value,{name:document.getElementById('editMemberName').value,phone:document.getElementById('editMemberPhone').value,joinDate:document.getElementById('editMemberDate').value,status:document.getElementById('editMemberStatus').value,address:document.getElementById('editMemberAddress').value});closeModal('editMemberModal');}
-    async function deleteMember(id){if(!confirm('Delete member?'))return;await deleteItem('members',id);savings.filter(s=>s.memberId===id).forEach(s=>deleteItem('savings',s.id));loans.filter(l=>l.memberId===id).forEach(l=>{deleteItem('loans',l.id);payments.filter(p=>p.loanId===l.id).forEach(p=>deleteItem('payments',p.id));});closeModal('reportModal');}
+    function showLoanForm() { if (!isAdmin()) return; const sel = document.getElementById('loanMemberId'); sel.innerHTML = members.map(m=>`<option value="${m.id}">${m.name}</option>`).join(''); document.getElementById('loanDate').valueAsDate = new Date(); document.getElementById('addLoanModal').classList.remove('hidden'); }
+    async function addLoan(e) { e.preventDefault(); const p = parseFloat(document.getElementById('loanPrincipal').value); await addItem('loans', { memberId: document.getElementById('loanMemberId').value, principal: p, balance: p, rate: parseFloat(document.getElementById('loanRate').value), date: document.getElementById('loanDate').value, status: document.getElementById('loanStatus').value }); closeModal('addLoanModal'); }
+    async function deleteLoan(id) { if (!confirm('Delete?')) return; await deleteItem('loans', id); payments.filter(p=>p.loanId===id).forEach(p=>deleteItem('payments', p.id)); closeModal('reportModal'); }
 
-    // Add Loan
-    function showLoanForm(){if(!isAdmin())return;const sel=document.getElementById('loanMemberId');sel.innerHTML=members.map(m=>`<option value="${m.id}">${m.name}</option>`).join('');document.getElementById('loanDate').valueAsDate=new Date();document.getElementById('addLoanModal').classList.remove('hidden');}
-    async function addLoan(e){e.preventDefault();const p=parseFloat(document.getElementById('loanPrincipal').value);await addItem('loans',{memberId:document.getElementById('loanMemberId').value,principal:p,balance:p,rate:parseFloat(document.getElementById('loanRate').value),duration:parseInt(document.getElementById('loanDuration').value),date:document.getElementById('loanDate').value,status:document.getElementById('loanStatus').value});closeModal('addLoanModal');}
-    function openEditLoan(id){if(!isAdmin())return;const l=loans.find(x=>x.id===id);if(!l)return;document.getElementById('editLoanId').value=l.id;const sel=document.getElementById('editLoanMemberId');sel.innerHTML=members.map(m=>`<option value="${m.id}" ${m.id===l.memberId?'selected':''}>${m.name}</option>`).join('');document.getElementById('editLoanPrincipal').value=l.principal;document.getElementById('editLoanRate').value=l.rate;document.getElementById('editLoanDuration').value=l.duration;document.getElementById('editLoanDate').value=l.date;document.getElementById('editLoanStatus').value=l.status;document.getElementById('editLoanModal').classList.remove('hidden');}
-    async function saveEditedLoan(e){e.preventDefault();const id=document.getElementById('editLoanId').value;const p=parseFloat(document.getElementById('editLoanPrincipal').value);await updateItem('loans',id,{memberId:document.getElementById('editLoanMemberId').value,principal:p,balance:p,rate:parseFloat(document.getElementById('editLoanRate').value),duration:parseInt(document.getElementById('editLoanDuration').value),date:document.getElementById('editLoanDate').value,status:document.getElementById('editLoanStatus').value});closeModal('editLoanModal');}
-    async function deleteLoan(id){if(!confirm('Delete loan?'))return;await deleteItem('loans',id);payments.filter(p=>p.loanId===id).forEach(p=>deleteItem('payments',p.id));closeModal('reportModal');}
+    function showSavingForm() { if (!isAdmin()) return; const sel = document.getElementById('savingMemberId'); sel.innerHTML = members.map(m=>`<option value="${m.id}">${m.name}</option>`).join(''); document.getElementById('addSavingModal').classList.remove('hidden'); }
+    async function addSaving(e) { e.preventDefault(); await addItem('savings', { memberId: document.getElementById('savingMemberId').value, amount: parseFloat(document.getElementById('savingAmount').value), month: document.getElementById('savingMonth').value, status: document.getElementById('savingStatus').value }); closeModal('addSavingModal'); }
 
-    // Add Saving
-    function showSavingForm(){if(!isAdmin())return;const sel=document.getElementById('savingMemberId');sel.innerHTML=members.map(m=>`<option value="${m.id}">${m.name}</option>`).join('');document.getElementById('addSavingModal').classList.remove('hidden');}
-    async function addSaving(e){e.preventDefault();await addItem('savings',{memberId:document.getElementById('savingMemberId').value,amount:parseFloat(document.getElementById('savingAmount').value),month:document.getElementById('savingMonth').value,status:document.getElementById('savingStatus').value});closeModal('addSavingModal');}
-    function openEditSaving(id){if(!isAdmin())return;const s=savings.find(x=>x.id===id);if(!s)return;document.getElementById('editSavingId').value=s.id;const sel=document.getElementById('editSavingMemberId');sel.innerHTML=members.map(m=>`<option value="${m.id}" ${m.id===s.memberId?'selected':''}>${m.name}</option>`).join('');document.getElementById('editSavingAmount').value=s.amount;document.getElementById('editSavingMonth').value=s.month;document.getElementById('editSavingStatus').value=s.status;document.getElementById('editSavingModal').classList.remove('hidden');}
-    async function saveEditedSaving(e){e.preventDefault();await updateItem('savings',document.getElementById('editSavingId').value,{memberId:document.getElementById('editSavingMemberId').value,amount:parseFloat(document.getElementById('editSavingAmount').value),month:document.getElementById('editSavingMonth').value,status:document.getElementById('editSavingStatus').value});closeModal('editSavingModal');}
-    async function deleteSaving(id){if(!confirm('Delete saving?'))return;await deleteItem('savings',id);closeModal('reportModal');}
+    function showPaymentForm() { if (!isAdmin()) return; const active = loans.filter(l=>l.status==='Active'); if (!active.length) return alert('No active loans'); const sel = document.getElementById('paymentLoanId'); sel.innerHTML = active.map(l => { const m = members.find(x=>x.id===l.memberId); return `<option value="${l.id}">${m?.name} - रु${l.balance}</option>`; }).join(''); document.getElementById('paymentMonth').valueAsDate = new Date(); document.getElementById('addPaymentModal').classList.remove('hidden'); }
+    async function addPayment(e) { e.preventDefault(); const total = parseFloat(document.getElementById('paymentTotal').value); const loanId = document.getElementById('paymentLoanId').value; await addItem('payments', { loanId, month: document.getElementById('paymentMonth').value, interest: parseFloat(document.getElementById('paymentInterest').value), principal: parseFloat(document.getElementById('paymentPrincipal').value), total }); const loan = loans.find(l=>l.id===loanId); const paid = payments.filter(p=>p.loanId===loanId).reduce((a,p)=>a+(parseFloat(p.principal)||0),0); await updateItem('loans', loanId, { balance: loan.principal - paid, status: (loan.principal - paid <= 0) ? 'Inactive' : 'Active' }); closeModal('addPaymentModal'); }
+    function calcTotal() { const i = parseFloat(document.getElementById('paymentInterest').value)||0; const p = parseFloat(document.getElementById('paymentPrincipal').value)||0; document.getElementById('paymentTotal').value = (i+p).toFixed(2); }
 
-    // Add Payment
-    function showPaymentForm(){if(!isAdmin())return;const active=loans.filter(l=>l.status==='Active');if(active.length===0)return alert('No active loans');const sel=document.getElementById('paymentLoanId');sel.innerHTML=active.map(l=>{const m=members.find(x=>x.id===l.memberId);return `<option value="${l.id}">${m?.name||'Unknown'} - रु${(l.balance||0).toLocaleString()}</option>`;}).join('');document.getElementById('paymentMonth').valueAsDate=new Date();document.getElementById('paymentDate').valueAsDate=new Date();document.getElementById('paymentTotal').value='0';document.getElementById('addPaymentModal').classList.remove('hidden');}
-    async function addPayment(e){e.preventDefault();const p={loanId:document.getElementById('paymentLoanId').value,month:document.getElementById('paymentMonth').value,interest:parseFloat(document.getElementById('paymentInterest').value)||0,principal:parseFloat(document.getElementById('paymentPrincipal').value)||0,total:parseFloat(document.getElementById('paymentTotal').value)||0,date:document.getElementById('paymentDate').value,status:document.getElementById('paymentStatus').value};await addItem('payments',p);await updateLoanBalance(p.loanId);closeModal('addPaymentModal');}
-    async function updateLoanBalance(loanId){const l=loans.find(x=>x.id===loanId);if(!l)return;const paid=payments.filter(p=>p.loanId===loanId).reduce((a,p)=>a+(parseFloat(p.principal)||0),0);const bal=l.principal-paid;await updateItem('loans',loanId,{balance:bal,status:bal<=0?'Inactive':'Active'});}
-    function calculatePaymentTotal(iId,pId,tId){const i=parseFloat(document.getElementById(iId).value)||0;const p=parseFloat(document.getElementById(pId).value)||0;document.getElementById(tId).value=(i+p).toFixed(2);}
+    async function createUser(e) { e.preventDefault(); const email = document.getElementById('newEmail').value.trim().toLowerCase(); if (users.some(u=>u.email.toLowerCase()===email)) return alert('Email exists'); await addItem('users', { email, password: document.getElementById('newPassword').value, name: document.getElementById('newName').value, role: document.getElementById('newRole').value }); e.target.reset(); }
+    async function deleteUser(id) { if (!confirm('Delete user?')) return; await deleteItem('users', id); }
+    async function recordBulkSavings(e) { e.preventDefault(); const month = document.getElementById('bulkSavingMonth').value; const amount = parseFloat(document.getElementById('bulkSavingAmount').value); const status = document.getElementById('bulkSavingStatus').value; members.filter(m=>m.status==='Active').forEach(m => { if (!savings.find(s=>s.memberId===m.id && s.month===month)) addItem('savings', { memberId: m.id, amount, month, status }); }); e.target.reset(); }
+    function downloadBackup() { const data = { users, members, savings, loans, payments }; const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `backup-${new Date().toISOString().slice(0,10)}.json`; a.click(); }
+    function restoreBackup(e) { const file = e.target.files[0]; if (!file) return; const r = new FileReader(); r.onload = async ev => { try { const d = JSON.parse(ev.target.result); if (confirm('Overwrite all data?')) { for (const col of ['users','members','savings','loans','payments']) await set(dbRefs[col], d[col] || {}); } alert('Restored'); } catch { alert('Invalid file'); } }; r.readAsText(file); }
 
-    // Settings
-    async function createUser(e){e.preventDefault();const email=document.getElementById('newEmail').value.trim().toLowerCase();if(users.some(u=>u.email.toLowerCase()===email))return alert('Email exists');await addItem('users',{email,password:document.getElementById('newPassword').value,name:document.getElementById('newName').value,role:document.getElementById('newRole').value});e.target.reset();}
-    async function deleteUser(email){if(!confirm('Delete user?'))return;const id=users.find(u=>u.email===email).id;await deleteItem('users',id);}
-    async function recordBulkSavings(e){e.preventDefault();const month=document.getElementById('bulkSavingMonth').value;const amount=parseFloat(document.getElementById('bulkSavingAmount').value);const status=document.getElementById('bulkSavingStatus').value;const active=members.filter(m=>m.status==='Active');for(const m of active){if(!savings.find(s=>s.memberId===m.id && s.month===month))await addItem('savings',{memberId:m.id,amount,month,status});}e.target.reset();}
-    function downloadBackup(){const data={users,members,savings,loans,payments};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`backup-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(url);}
-    function restoreBackup(e){const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=async ev=>{try{const d=JSON.parse(ev.target.result);if(confirm('Overwrite all data?')){for(const col of['users','members','savings','loans','payments']){await set(dbRefs[col],d[col]||{});}}alert('Restored');}catch{alert('Invalid file');}};r.readAsText(file);}
+    function generateId() { const y = new Date().getFullYear().toString().slice(-2); const c = members.length + 1; return `M${y}${String(c).padStart(3,'0')}`; }
+    function searchTable(tableId, query) { const rows = document.querySelectorAll(`#${tableId} tbody tr`); rows.forEach(r => r.style.display = r.textContent.toLowerCase().includes(query.toLowerCase()) ? '' : 'none'); }
 
-    // Utilities
-    function generateMemberId(){const y=new Date().getFullYear().toString().slice(-2);const c=members.length+1;return `M${y}${String(c).padStart(3,'0')}`;}
-    function getAllMonths(){const set=new Set();savings.forEach(s=>set.add(s.month));loans.forEach(l=>set.add(l.date.slice(0,7)));payments.forEach(p=>set.add(p.month));return Array.from(set).sort();}
-    function aggregateByMonth(arr,key,valKey){const m={};arr.forEach(i=>{const mon=i[key].slice(0,7);m[mon]=(m[mon]||0)+(parseFloat(i[valKey])||0);});return m;}
-    function searchTable(id,q){const rows=document.querySelectorAll(`#${id} tbody tr`);rows.forEach(r=>r.style.display=r.textContent.toLowerCase().includes(q.toLowerCase())?'':'none');}
+    function showReport(type, id) {
+      const modal = document.getElementById('reportModal');
+      const content = document.getElementById('reportContent');
+      let html = '';
+      if (type === 'member') {
+        const m = members.find(x=>x.id===id);
+        html = `<h4 class="font-bold">${m.name}</h4><p>Phone: ${m.phone||'-'}</p><p>Joined: ${m.joinDate}</p><p>Status: ${m.status}</p>`;
+      }
+      content.innerHTML = html || 'No data';
+      modal.classList.remove('hidden');
+    }
 
-    // Report Modal (full implementation – same as previous answer)
-    function showReportModal(type,id){/* SAME CODE AS IN PREVIOUS ANSWER – omitted here for brevity but fully functional in the file */ const modal=document.getElementById('reportModal'); modal.classList.remove('hidden'); /* ... build HTML ... */ }
+    // CRUD Helpers
+    async function addItem(col, obj) { const newRef = push(dbRefs[col]); obj.id = newRef.key; await set(newRef, obj); }
+    async function updateItem(col, id, updates) { await set(ref(db, `app/${col}/${id}`), { ...loans.find(l=>l.id===id), ...updates }); }
+    async function deleteItem(col, id) { await remove(ref(db, `app/${col}/${id}`)); }
 
-    // ---------- Init ----------
+    // Init
     window.onload = () => {
       if (localStorage.getItem('currentUser')) {
         currentUser = JSON.parse(localStorage.getItem('currentUser'));
         document.getElementById('authModal').classList.add('hidden');
         document.getElementById('app').classList.remove('hidden');
-        updateUserInfo(); showSection('dashboard');
+        updateUserInfo();
+        showSection('dashboard');
       }
     };
   </script>
