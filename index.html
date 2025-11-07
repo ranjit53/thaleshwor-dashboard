@@ -1,15 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Thaleshwor Yuva Samuh - Dashboard (Fixed)</title>
-
-  <!-- Tailwind & Icons -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Thaleshwor Yuva Samuh - Dashboard (Firebase - Nav Fixed)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-
   <style>
     .sidebar-link { @apply flex items-center px-6 py-4 text-base font-bold rounded-xl transition-colors duration-200; }
     .sidebar-link:hover { @apply bg-gray-100 text-gray-900; }
@@ -23,12 +20,12 @@
     .form-grid { @apply grid grid-cols-1 md:grid-cols-2 gap-4; }
     .form-grid .full { @apply md:col-span-2; }
     .small-chart { height: 250px !important; }
-    .hidden { display: none !important; }
+    .hidden { display:none!important; }
   </style>
 </head>
 <body class="bg-gray-50 font-sans antialiased">
 
-  <!-- ==================== AUTH MODAL ==================== -->
+  <!-- Auth Modal -->
   <div id="authModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-8">
       <div class="flex items-center mb-6">
@@ -47,10 +44,9 @@
     </div>
   </div>
 
-  <!-- ==================== MAIN APP ==================== -->
+  <!-- App -->
   <div id="app" class="hidden flex">
 
-    <!-- Sidebar -->
     <aside class="bg-white shadow-md flex flex-col h-screen w-64 fixed left-0 top-0 border-r z-20">
       <div class="p-6 border-b">
         <div class="flex items-center">
@@ -63,24 +59,12 @@
       </div>
 
       <nav class="flex flex-col flex-1 overflow-y-auto px-3 py-4 space-y-1">
-        <a href="#" onclick="showSection('dashboard', event)" class="sidebar-link active">
-          <i class="fas fa-tachometer-alt sidebar-icon text-blue-600"></i> Dashboard
-        </a>
-        <a href="#" onclick="showSection('members', event)" class="sidebar-link">
-          <i class="fas fa-users sidebar-icon text-purple-600"></i> Members
-        </a>
-        <a href="#" onclick="showSection('savings', event)" class="sidebar-link">
-          <i class="fas fa-piggy-bank sidebar-icon text-green-600"></i> Savings
-        </a>
-        <a href="#" onclick="showSection('loans', event)" class="sidebar-link">
-          <i class="fas fa-hand-holding-usd sidebar-icon text-orange-600"></i> Loans
-        </a>
-        <a href="#" onclick="showSection('payments', event)" class="sidebar-link">
-          <i class="fas fa-file-invoice-dollar sidebar-icon text-pink-600"></i> Payments
-        </a>
-        <a href="#" id="nav-settings" onclick="showSection('settings', event)" class="sidebar-link">
-          <i class="fas fa-cog sidebar-icon text-gray-600"></i> Settings
-        </a>
+        <a href="#" onclick="showSection('dashboard', event)" class="sidebar-link active"><i class="fas fa-tachometer-alt sidebar-icon text-blue-600"></i> Dashboard</a>
+        <a href="#" onclick="showSection('members', event)" class="sidebar-link"><i class="fas fa-users sidebar-icon text-purple-600"></i> Members</a>
+        <a href="#" onclick="showSection('savings', event)" class="sidebar-link"><i class="fas fa-piggy-bank sidebar-icon text-green-600"></i> Savings</a>
+        <a href="#" onclick="showSection('loans', event)" class="sidebar-link"><i class="fas fa-hand-holding-usd sidebar-icon text-orange-600"></i> Loans</a>
+        <a href="#" onclick="showSection('payments', event)" class="sidebar-link"><i class="fas fa-file-invoice-dollar sidebar-icon text-pink-600"></i> Payments</a>
+        <a href="#" id="nav-settings" onclick="showSection('settings', event)" class="sidebar-link"><i class="fas fa-cog sidebar-icon text-gray-600"></i> Settings</a>
       </nav>
 
       <div class="mt-auto border-t p-4">
@@ -95,7 +79,6 @@
       </div>
     </aside>
 
-    <!-- Main Content -->
     <main class="flex-1 ml-64 p-8 overflow-y-auto min-h-screen">
       <div class="flex items-center justify-between mb-6">
         <div>
@@ -104,7 +87,7 @@
         </div>
       </div>
 
-      <!-- DASHBOARD -->
+      <!-- Sections (same as previous fixed) -->
       <section id="section-dashboard">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 mb-8">
           <div class="stat-card"><div><p class="text-sm text-gray-600">Total Members</p><p class="text-2xl font-bold" id="stat-members">0</p></div><div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center"><i class="fas fa-users text-blue-600"></i></div></div>
@@ -129,7 +112,6 @@
         </div>
       </section>
 
-      <!-- MEMBERS -->
       <section id="section-members" class="hidden">
         <div class="flex justify-end mb-4"><button onclick="showAddMemberForm()" class="admin-only bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">+ Add Member</button></div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
@@ -138,7 +120,6 @@
         </div>
       </section>
 
-      <!-- SAVINGS -->
       <section id="section-savings" class="hidden">
         <div class="flex justify-end mb-4"><button onclick="showSavingForm()" class="admin-only bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm">+ Record Saving</button></div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
@@ -147,7 +128,6 @@
         </div>
       </section>
 
-      <!-- LOANS -->
       <section id="section-loans" class="hidden">
         <div class="flex justify-end mb-4"><button onclick="showLoanForm()" class="admin-only bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700 text-sm">+ Distribute Loan</button></div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
@@ -156,7 +136,6 @@
         </div>
       </section>
 
-      <!-- PAYMENTS -->
       <section id="section-payments" class="hidden">
         <div class="flex justify-end mb-4"><button onclick="showPaymentForm()" class="admin-only bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 text-sm">+ Record Payment</button></div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
@@ -165,7 +144,6 @@
         </div>
       </section>
 
-      <!-- SETTINGS -->
       <section id="section-settings" class="hidden">
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <h3 class="text-lg font-semibold mb-4">Create User</h3>
@@ -195,7 +173,7 @@
         </div>
       </section>
 
-      <!-- MODALS -->
+      <!-- Modals: addMember/addLoan/addSaving/addPayment/report (same as before) -->
       <div id="addMemberModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl p-6">
           <h3 class="text-xl font-bold mb-4">Add Member</h3>
@@ -210,7 +188,6 @@
         </div>
       </div>
 
-      <!-- Add Loan Modal -->
       <div id="addLoanModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-lg p-6">
           <h3 class="text-xl font-bold mb-4">Add Loan</h3>
@@ -225,7 +202,6 @@
         </div>
       </div>
 
-      <!-- Add Saving Modal -->
       <div id="addSavingModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-lg p-6">
           <h3 class="text-xl font-bold mb-4">Record Saving</h3>
@@ -239,7 +215,6 @@
         </div>
       </div>
 
-      <!-- Add Payment Modal -->
       <div id="addPaymentModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-lg p-6">
           <h3 class="text-xl font-bold mb-4">Record Payment</h3>
@@ -254,7 +229,6 @@
         </div>
       </div>
 
-      <!-- Report Modal -->
       <div id="reportModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto p-8">
           <div class="flex justify-between items-start mb-6 border-b pb-4">
@@ -269,7 +243,6 @@
     </main>
   </div>
 
-  <!-- ==================== SCRIPT ==================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getDatabase, ref, onValue, set, push, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -294,15 +267,14 @@
       payments: ref(db, 'app/payments')
     };
 
-    // Keep keys when reading from DB
-    let users = [], members = [], savings = [], loans = [], payments = [];
-    let currentUser = null;
-    let lineChart = null, pieChart = null;
-
     function mapWithId(snapshot) {
       const v = snapshot.val();
       return v ? Object.entries(v).map(([k, val]) => ({ id: k, ...val })) : [];
     }
+
+    let users = [], members = [], savings = [], loans = [], payments = [];
+    let currentUser = null;
+    let lineChart = null, pieChart = null;
 
     onValue(dbRefs.users, s => { users = mapWithId(s); renderUsers(); });
     onValue(dbRefs.members, s => { members = mapWithId(s); renderMembers(); updateDashboard(); });
@@ -310,7 +282,9 @@
     onValue(dbRefs.loans, s => { loans = mapWithId(s); renderLoans(); updateDashboard(); });
     onValue(dbRefs.payments, s => { payments = mapWithId(s); renderPayments(); updateDashboard(); });
 
-    function updateDashboard() { if (!document.getElementById('section-dashboard').classList.contains('hidden')) loadDashboard(); }
+    function updateDashboard() {
+      if (!document.getElementById('section-dashboard').classList.contains('hidden')) loadDashboard();
+    }
 
     function handleSignIn(e) {
       e.preventDefault();
@@ -323,6 +297,7 @@
       document.getElementById('authModal').classList.add('hidden');
       document.getElementById('app').classList.remove('hidden');
       updateUserInfo();
+      // ensure navigation wiring ready, show dashboard
       showSection('dashboard');
     }
 
@@ -340,14 +315,20 @@
     function isAdmin() { const u = currentUser || JSON.parse(localStorage.getItem('currentUser')||'null'); return u?.role === 'admin'; }
 
     function showSection(id, e) {
-      if (e) e.preventDefault();
+      if (e && e.preventDefault) e.preventDefault();
       if (id === 'settings' && !isAdmin()) { alert('Admins only'); return; }
+      // hide all sections
       document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
       const sec = document.getElementById(`section-${id}`);
       if (!sec) return;
+      // show selected
       sec.classList.remove('hidden');
+      // update active link highlight (handles multiple links)
       document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-      document.querySelector(`[onclick="showSection('${id}', event)"]`)?.classList.add('active');
+      // find the sidebar link with matching onclick (works for inline handlers)
+      const el = Array.from(document.querySelectorAll('.sidebar-link')).find(a => a.getAttribute('onclick') && a.getAttribute('onclick').includes(`showSection('${id}'`));
+      if (el) el.classList.add('active');
+      // update header
       const titles = { dashboard: ['Dashboard', 'Overview'], members: ['Members', 'Manage'], savings: ['Savings', 'Track'], loans: ['Loans', 'Manage'], payments: ['Payments', 'Track'], settings: ['Settings', 'Users'] };
       if (titles[id]) {
         document.getElementById('headerTitle').textContent = titles[id][0];
@@ -355,6 +336,8 @@
       }
       if (id === 'dashboard') loadDashboard();
       checkAdminUI();
+      // scroll to top of main content for a nicer feel
+      document.querySelector('main').scrollTop = 0;
     }
 
     function checkAdminUI() {
@@ -364,10 +347,8 @@
       document.querySelectorAll('.admin-only').forEach(el => el.style.display = admin ? '' : 'none');
     }
 
-    function loadDashboard() {
-      updateStats(); renderCharts(); updateDefaulters();
-    }
-
+    // Dashboard helpers (same logic)
+    function loadDashboard() { updateStats(); renderCharts(); updateDefaulters(); }
     function updateStats() {
       document.getElementById('stat-members').textContent = members.length;
       const totalSav = savings.reduce((a,s) => a + (parseFloat(s.amount)||0), 0);
@@ -380,7 +361,7 @@
     }
 
     function renderCharts() {
-      const monthsSet = new Set([...(savings.map(s=>s.month||'')), ...(loans.map(l=>(l.date||'').slice(0,7)))]); 
+      const monthsSet = new Set([...(savings.map(s=>s.month||'')), ...(loans.map(l=>(l.date||'').slice(0,7)))]);
       const months = Array.from(monthsSet).filter(Boolean).sort();
       const savMap = months.reduce((a,m) => (a[m] = savings.filter(s=>s.month===m).reduce((t,s)=>t+(parseFloat(s.amount)||0),0), a), {});
       const loanMap = months.reduce((a,m) => (a[m] = loans.filter(l=>l.date&&l.date.startsWith(m)).reduce((t,l)=>t+(parseFloat(l.principal)||0),0), a), {});
@@ -416,6 +397,7 @@
       document.getElementById('defaulters-loans').textContent = loans.filter(l=>l.status==='Active' && !paidLoan.has(l.id)).length;
     }
 
+    // Renderers and CRUD (same as before)
     function renderMembers() {
       const tbody = document.getElementById('member-list');
       document.getElementById('member-count').textContent = members.length;
@@ -494,7 +476,7 @@
 
     function renderUsers() {
       const tbody = document.getElementById('user-list');
-      if (!users.length) { tbody.innerHTML = '<tr><td colspan="4" class="p-3 text-center text-gray-500">No users</td></tr>'; return;}
+      if (!users.length) { tbody.innerHTML = '<tr><td colspan="4" class="p-3 text-center text-gray-500">No users</td></tr>'; return; }
       tbody.innerHTML = users.map(u => `<tr class="border-b"><td class="p-3">${u.name||'-'}</td><td class="p-3">${u.email||'-'}</td><td class="p-3"><span class="px-2 py-1 rounded-full text-xs ${u.role==='admin'?'bg-purple-100 text-purple-800':'bg-gray-100 text-gray-800'}">${u.role||'viewer'}</span></td><td class="p-3">${u.email!=='example.admin@gmail.com' ? `<button onclick="deleteUser('${u.id}')" class="text-red-600 hover:underline text-xs">Delete</button>` : ''}</td></tr>`).join('');
     }
 
@@ -510,12 +492,7 @@
     async function addSaving(e) { e.preventDefault(); const obj = { memberId: document.getElementById('savingMemberId').value, amount: parseFloat(document.getElementById('savingAmount').value)||0, month: document.getElementById('savingMonth').value, status: document.getElementById('savingStatus').value }; await addItem('savings', obj); closeModal('addSavingModal'); }
 
     function showPaymentForm() { if (!isAdmin()) return alert('Admins only'); const active = loans.filter(l=>l.status==='Active'); if (!active.length) return alert('No active loans'); const sel = document.getElementById('paymentLoanId'); sel.innerHTML = active.map(l => { const m = members.find(x=>x.id===l.memberId); return `<option value="${l.id}">${m?.name||'Unknown'} - रु${(l.balance||0)}</option>`; }).join(''); document.getElementById('paymentMonth').valueAsDate = new Date(); document.getElementById('addPaymentModal').classList.remove('hidden'); }
-    async function addPayment(e) { e.preventDefault(); const total = parseFloat(document.getElementById('paymentTotal').value)||0; const loanId = document.getElementById('paymentLoanId').value; const obj = { loanId, month: document.getElementById('paymentMonth').value, interest: parseFloat(document.getElementById('paymentInterest').value)||0, principal: parseFloat(document.getElementById('paymentPrincipal').value)||0, total }; await addItem('payments', obj); // update loan balance
-      const loan = loans.find(l=>l.id===loanId);
-      const paid = payments.filter(p=>p.loanId===loanId).reduce((a,p)=>a+(parseFloat(p.principal)||0),0) + obj.principal;
-      if (loan) await updateItem('loans', loanId, { balance: Math.max((parseFloat(loan.principal)||0) - paid, 0), status: ((parseFloat(loan.principal)||0) - paid <= 0) ? 'Inactive' : 'Active' });
-      closeModal('addPaymentModal');
-    }
+    async function addPayment(e) { e.preventDefault(); const total = parseFloat(document.getElementById('paymentTotal').value)||0; const loanId = document.getElementById('paymentLoanId').value; const obj = { loanId, month: document.getElementById('paymentMonth').value, interest: parseFloat(document.getElementById('paymentInterest').value)||0, principal: parseFloat(document.getElementById('paymentPrincipal').value)||0, total }; await addItem('payments', obj); const loan = loans.find(l=>l.id===loanId); const paid = payments.filter(p=>p.loanId===loanId).reduce((a,p)=>a+(parseFloat(p.principal)||0),0) + obj.principal; if (loan) await updateItem('loans', loanId, { balance: Math.max((parseFloat(loan.principal)||0) - paid, 0), status: ((parseFloat(loan.principal)||0) - paid <= 0) ? 'Inactive' : 'Active' }); closeModal('addPaymentModal'); }
 
     async function createUser(e) { e.preventDefault(); const email = document.getElementById('newEmail').value.trim().toLowerCase(); if (users.some(u=>u.email && u.email.toLowerCase()===email)) return alert('Email exists'); await addItem('users', { email, password: document.getElementById('newPassword').value, name: document.getElementById('newName').value, role: document.getElementById('newRole').value }); e.target.reset(); }
     async function deleteUser(id) { if (!confirm('Delete user?')) return; await deleteItem('users', id); }
@@ -549,33 +526,31 @@
     }
 
     async function addItem(col, obj) { const newRef = push(dbRefs[col]); obj.id = newRef.key; await set(newRef, obj); }
-    async function updateItem(col, id, updates) { // merge updates with existing
-      const existing = (col === 'loans' ? loans.find(l=>l.id===id) : (col==='members'?members.find(m=>m.id===id):{})) || {};
-      await set(ref(db, `app/${col}/${id}`), { ...existing, ...updates, id });
-    }
+    async function updateItem(col, id, updates) { const existing = (col === 'loans' ? loans.find(l=>l.id===id) : (col==='members'?members.find(m=>m.id===id):{})) || {}; await set(ref(db, `app/${col}/${id}`), { ...existing, ...updates, id }); }
     async function deleteItem(col, id) { await remove(ref(db, `app/${col}/${id}`)); }
 
-    // delete helpers for UI
     async function deleteMember(id) { if (!confirm('Delete member?')) return; await deleteItem('members', id); }
     async function deleteLoan(id) { if (!confirm('Delete loan?')) return; await deleteItem('loans', id); }
-    async function deleteSaving(memberId) { // find savings for member and remove them (simple behavior)
-      if (!confirm('Delete all savings for this member?')) return;
-      const toDel = savings.filter(s=>s.memberId===memberId);
-      for (const s of toDel) await deleteItem('savings', s.id);
-    }
+    async function deleteSaving(memberId) { if (!confirm('Delete all savings for this member?')) return; const toDel = savings.filter(s=>s.memberId===memberId); for (const s of toDel) await deleteItem('savings', s.id); }
     async function deletePayment(loanId) { if (!confirm('Delete payments for this loan?')) return; const toDel = payments.filter(p=>p.loanId===loanId); for (const p of toDel) await deleteItem('payments', p.id); }
 
-    window.onload = () => {
+    // expose handlers to global scope so inline onclick attributes work (module scope isn't global)
+    const exported = { showSection, logout, handleSignIn, showAddMemberForm, addMember, showLoanForm, addLoan, showSavingForm, addSaving, showPaymentForm, addPayment, createUser, deleteUser, recordBulkSavings, downloadBackup, restoreBackup, deleteMember, deleteLoan, deleteSaving, deletePayment, showReport, closeModal, searchTable };
+    Object.entries(exported).forEach(([k,v]) => window[k] = v);
+
+    // initialize UI on load: if user saved, restore state
+    window.addEventListener('DOMContentLoaded', () => {
       if (localStorage.getItem('currentUser')) {
         currentUser = JSON.parse(localStorage.getItem('currentUser'));
         document.getElementById('authModal').classList.add('hidden');
         document.getElementById('app').classList.remove('hidden');
         updateUserInfo();
-        showSection('dashboard');
+        // show dashboard after a short microtask to ensure listeners set
+        setTimeout(()=> showSection('dashboard'), 50);
       } else {
-        // keep auth modal open
+        // keep auth modal visible
       }
-    };
+    });
   </script>
 </body>
 </html>
